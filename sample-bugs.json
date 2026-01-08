@@ -1,0 +1,280 @@
+[
+  {
+    "id": "1704067200001",
+    "title": "TypeError: Cannot read property 'map' of undefined",
+    "error": "TypeError: Cannot read property 'map' of undefined\n    at UserList (UserList.jsx:15:23)\n    at renderWithHooks (react-dom.development.js:14985:18)",
+    "context": "Fetching users from API, component renders before data arrives",
+    "solution": "Add optional chaining: users?.map() or initialize state with empty array",
+    "project": "react-dashboard",
+    "tags": ["react", "javascript", "api"],
+    "createdAt": "2025-12-15T10:30:00.000Z",
+    "updatedAt": "2025-12-15T10:30:00.000Z"
+  },
+  {
+    "id": "1704067200002",
+    "title": "CORS policy blocked request",
+    "error": "Access to XMLHttpRequest at 'https://api.example.com' from origin 'http://localhost:3000' has been blocked by CORS policy",
+    "context": "Making API calls from local dev server to production API",
+    "solution": "Add proxy in package.json or configure CORS headers on backend",
+    "project": "react-dashboard",
+    "tags": ["cors", "api", "backend"],
+    "createdAt": "2025-12-14T09:15:00.000Z",
+    "updatedAt": "2025-12-14T09:15:00.000Z"
+  },
+  {
+    "id": "1704067200003",
+    "title": "Module not found: Can't resolve 'axios'",
+    "error": "Module not found: Error: Can't resolve 'axios' in '/app/src'",
+    "context": "Fresh clone of repo, ran npm start without npm install",
+    "solution": "Run npm install to install dependencies",
+    "project": "react-dashboard",
+    "tags": ["npm", "dependencies"],
+    "createdAt": "2025-12-13T14:20:00.000Z",
+    "updatedAt": "2025-12-13T14:20:00.000Z"
+  },
+  {
+    "id": "1704067200004",
+    "title": "PostgreSQL connection refused",
+    "error": "ECONNREFUSED 127.0.0.1:5432\nError: connect ECONNREFUSED 127.0.0.1:5432",
+    "context": "Starting Node.js app, PostgreSQL service not running",
+    "solution": "Start PostgreSQL: sudo systemctl start postgresql",
+    "project": "node-api",
+    "tags": ["postgresql", "database", "docker"],
+    "createdAt": "2025-12-12T11:45:00.000Z",
+    "updatedAt": "2025-12-12T11:45:00.000Z"
+  },
+  {
+    "id": "1704067200005",
+    "title": "JWT token expired",
+    "error": "JsonWebTokenError: jwt expired\n    at Jwt.verify (/node_modules/jsonwebtoken/verify.js:133:19)",
+    "context": "User session expired after 1 hour, getting 401 on all requests",
+    "solution": "Implement refresh token flow or extend token expiry in config",
+    "project": "node-api",
+    "tags": ["jwt", "auth", "security"],
+    "createdAt": "2025-12-11T16:30:00.000Z",
+    "updatedAt": "2025-12-11T16:30:00.000Z"
+  },
+  {
+    "id": "1704067200006",
+    "title": "Git merge conflict in package-lock.json",
+    "error": "CONFLICT (content): Merge conflict in package-lock.json\nAutomatic merge failed; fix conflicts and then commit the result.",
+    "context": "Merging feature branch into main after teammate updated dependencies",
+    "solution": "Delete package-lock.json, run npm install, then commit the new lock file",
+    "project": "react-dashboard",
+    "tags": ["git", "npm", "merge"],
+    "createdAt": "2025-12-10T08:00:00.000Z",
+    "updatedAt": "2025-12-10T08:00:00.000Z"
+  },
+  {
+    "id": "1704067200007",
+    "title": "Docker container exits immediately",
+    "error": "Container exited with code 0",
+    "context": "Running docker-compose up, container starts and stops instantly",
+    "solution": "Add 'tty: true' to docker-compose.yml or ensure CMD keeps process running",
+    "project": "devops",
+    "tags": ["docker", "containers"],
+    "createdAt": "2025-12-09T13:20:00.000Z",
+    "updatedAt": "2025-12-09T13:20:00.000Z"
+  },
+  {
+    "id": "1704067200008",
+    "title": "ESLint parsing error: Unexpected token",
+    "error": "Parsing error: Unexpected token =\n  1 | class MyComponent {\n  2 |   state = { count: 0 }",
+    "context": "Using class properties syntax without proper babel config",
+    "solution": "Install @babel/plugin-proposal-class-properties and add to .babelrc",
+    "project": "react-dashboard",
+    "tags": ["eslint", "babel", "javascript"],
+    "createdAt": "2025-12-08T10:10:00.000Z",
+    "updatedAt": "2025-12-08T10:10:00.000Z"
+  },
+  {
+    "id": "1704067200009",
+    "title": "Python ImportError: No module named 'requests'",
+    "error": "ImportError: No module named 'requests'\n  File \"app.py\", line 1, in <module>\n    import requests",
+    "context": "Running Python script in new virtual environment",
+    "solution": "pip install requests (or pip install -r requirements.txt)",
+    "project": "python-scripts",
+    "tags": ["python", "pip", "dependencies"],
+    "createdAt": "2025-12-07T15:45:00.000Z",
+    "updatedAt": "2025-12-07T15:45:00.000Z"
+  },
+  {
+    "id": "1704067200010",
+    "title": "React useEffect infinite loop",
+    "error": "Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect",
+    "context": "useEffect with object dependency causing re-renders",
+    "solution": "Use useMemo for object dependencies or spread specific properties in dep array",
+    "project": "react-dashboard",
+    "tags": ["react", "hooks", "performance"],
+    "createdAt": "2025-12-06T09:30:00.000Z",
+    "updatedAt": "2025-12-06T09:30:00.000Z"
+  }
+,
+  {
+    "id": "1704067200011",
+    "title": "TypeScript: Property does not exist on type",
+    "error": "TS2339: Property 'name' does not exist on type '{}'",
+    "context": "API response typed as empty object, accessing properties fails",
+    "solution": "Define proper interface for API response and type the fetch result",
+    "project": "typescript-app",
+    "tags": ["typescript", "types", "api"],
+    "createdAt": "2025-12-05T14:00:00.000Z",
+    "updatedAt": "2025-12-05T14:00:00.000Z"
+  },
+  {
+    "id": "1704067200012",
+    "title": "npm ERR! ERESOLVE unable to resolve dependency tree",
+    "error": "npm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer dep missing: react@^17.0.0",
+    "context": "Installing package that requires React 17 but project uses React 18",
+    "solution": "Use --legacy-peer-deps flag or find compatible package version",
+    "project": "react-dashboard",
+    "tags": ["npm", "dependencies", "react"],
+    "createdAt": "2025-12-04T11:15:00.000Z",
+    "updatedAt": "2025-12-04T11:15:00.000Z"
+  },
+  {
+    "id": "1704067200013",
+    "title": "MongoDB connection timeout",
+    "error": "MongooseServerSelectionError: connection timed out\n    at Timeout._onTimeout",
+    "context": "Connecting to MongoDB Atlas from local machine",
+    "solution": "Whitelist IP address in MongoDB Atlas Network Access settings",
+    "project": "node-api",
+    "tags": ["mongodb", "database", "cloud"],
+    "createdAt": "2025-12-03T16:40:00.000Z",
+    "updatedAt": "2025-12-03T16:40:00.000Z"
+  },
+  {
+    "id": "1704067200014",
+    "title": "CSS z-index not working",
+    "error": "Modal appears behind other elements despite high z-index",
+    "context": "Modal component with z-index: 9999 still hidden behind sidebar",
+    "solution": "Parent element needs position: relative and creates new stacking context. Move modal to body root.",
+    "project": "react-dashboard",
+    "tags": ["css", "z-index", "modal"],
+    "createdAt": "2025-12-02T08:50:00.000Z",
+    "updatedAt": "2025-12-02T08:50:00.000Z"
+  },
+  {
+    "id": "1704067200015",
+    "title": "AWS S3 Access Denied",
+    "error": "AccessDenied: Access Denied\n    at Request.extractError (s3.js:711:35)",
+    "context": "Uploading file to S3 bucket from Lambda function",
+    "solution": "Add s3:PutObject permission to Lambda execution role IAM policy",
+    "project": "aws-lambda",
+    "tags": ["aws", "s3", "iam", "permissions"],
+    "createdAt": "2025-12-01T12:25:00.000Z",
+    "updatedAt": "2025-12-01T12:25:00.000Z"
+  }
+,
+  {
+    "id": "1704067200016",
+    "title": "Next.js hydration mismatch",
+    "error": "Warning: Text content did not match. Server: \"Dec 15\" Client: \"Dec 16\"",
+    "context": "Rendering dates on server vs client in different timezones",
+    "solution": "Use useEffect for client-only date formatting or suppressHydrationWarning",
+    "project": "nextjs-blog",
+    "tags": ["nextjs", "ssr", "hydration"],
+    "createdAt": "2025-11-30T10:00:00.000Z",
+    "updatedAt": "2025-11-30T10:00:00.000Z"
+  },
+  {
+    "id": "1704067200017",
+    "title": "Tailwind classes not applying",
+    "error": "Tailwind utility classes have no effect on elements",
+    "context": "Added new component, Tailwind styles not working",
+    "solution": "Add component path to content array in tailwind.config.js",
+    "project": "react-dashboard",
+    "tags": ["tailwind", "css", "config"],
+    "createdAt": "2025-11-29T14:35:00.000Z",
+    "updatedAt": "2025-11-29T14:35:00.000Z"
+  },
+  {
+    "id": "1704067200018",
+    "title": "Redis WRONGTYPE Operation error",
+    "error": "WRONGTYPE Operation against a key holding the wrong kind of value",
+    "context": "Trying to GET a key that was set with HSET",
+    "solution": "Use HGET/HGETALL for hash keys, or delete and recreate with correct type",
+    "project": "node-api",
+    "tags": ["redis", "cache", "database"],
+    "createdAt": "2025-11-28T09:20:00.000Z",
+    "updatedAt": "2025-11-28T09:20:00.000Z"
+  },
+  {
+    "id": "1704067200019",
+    "title": "GitHub Actions workflow failing",
+    "error": "Error: Process completed with exit code 1.\nnpm test failed",
+    "context": "CI pipeline failing on test step after adding new tests",
+    "solution": "Tests were using local env vars not set in CI. Added secrets to GitHub repo settings.",
+    "project": "devops",
+    "tags": ["github-actions", "ci-cd", "testing"],
+    "createdAt": "2025-11-27T11:50:00.000Z",
+    "updatedAt": "2025-11-27T11:50:00.000Z"
+  },
+  {
+    "id": "1704067200020",
+    "title": "Prisma migration failed",
+    "error": "Error: P3009 migrate found failed migrations in the target database",
+    "context": "Running prisma migrate deploy on production database",
+    "solution": "Mark failed migration as rolled back: prisma migrate resolve --rolled-back",
+    "project": "node-api",
+    "tags": ["prisma", "database", "migrations"],
+    "createdAt": "2025-11-26T15:10:00.000Z",
+    "updatedAt": "2025-11-26T15:10:00.000Z"
+  }
+,
+  {
+    "id": "1704067200021",
+    "title": "Webpack build out of memory",
+    "error": "FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory",
+    "context": "Building large React app with many dependencies",
+    "solution": "Increase Node memory: NODE_OPTIONS=--max_old_space_size=4096 npm run build",
+    "project": "react-dashboard",
+    "tags": ["webpack", "memory", "build"],
+    "createdAt": "2025-11-25T08:30:00.000Z",
+    "updatedAt": "2025-11-25T08:30:00.000Z"
+  },
+  {
+    "id": "1704067200022",
+    "title": "SSL certificate problem: self signed certificate",
+    "error": "curl: (60) SSL certificate problem: self signed certificate in certificate chain",
+    "context": "Calling internal API with self-signed cert from Node.js",
+    "solution": "Set NODE_TLS_REJECT_UNAUTHORIZED=0 for dev, or add CA cert to trusted store",
+    "project": "node-api",
+    "tags": ["ssl", "https", "security"],
+    "createdAt": "2025-11-24T13:45:00.000Z",
+    "updatedAt": "2025-11-24T13:45:00.000Z"
+  },
+  {
+    "id": "1704067200023",
+    "title": "React key prop warning",
+    "error": "Warning: Each child in a list should have a unique \"key\" prop",
+    "context": "Rendering list of items without key attribute",
+    "solution": "Add unique key prop to each list item: key={item.id}",
+    "project": "react-dashboard",
+    "tags": ["react", "lists", "performance"],
+    "createdAt": "2025-11-23T10:15:00.000Z",
+    "updatedAt": "2025-11-23T10:15:00.000Z"
+  },
+  {
+    "id": "1704067200024",
+    "title": "Vercel deployment environment variables missing",
+    "error": "Error: Missing required environment variable: DATABASE_URL",
+    "context": "Deployed to Vercel but forgot to add env vars in dashboard",
+    "solution": "Add environment variables in Vercel project settings > Environment Variables",
+    "project": "nextjs-blog",
+    "tags": ["vercel", "deployment", "env"],
+    "createdAt": "2025-11-22T16:00:00.000Z",
+    "updatedAt": "2025-11-22T16:00:00.000Z"
+  },
+  {
+    "id": "1704067200025",
+    "title": "Jest test timeout exceeded",
+    "error": "Timeout - Async callback was not invoked within the 5000 ms timeout",
+    "context": "Testing async function that makes API call",
+    "solution": "Increase timeout: jest.setTimeout(30000) or mock the API call",
+    "project": "node-api",
+    "tags": ["jest", "testing", "async"],
+    "createdAt": "2025-11-21T09:40:00.000Z",
+    "updatedAt": "2025-11-21T09:40:00.000Z"
+  }
+]
