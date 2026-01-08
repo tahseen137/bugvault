@@ -98,7 +98,7 @@
       color: var(--text-muted); pointer-events: none;
     }
 
-    .header-actions { display: flex; gap: 0.75rem; }
+    .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
     .btn {
       padding: 0.625rem 1.25rem;
@@ -220,9 +220,7 @@
     }
     .saved-filter-item:hover { color: var(--text-primary); background: var(--border); }
     .saved-filter-item .filter-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .saved-filter-item .delete-filter {
-      opacity: 0; color: var(--accent-red); cursor: pointer; font-size: 1rem; line-height: 1;
-    }
+    .saved-filter-item .delete-filter { opacity: 0; color: var(--accent-red); cursor: pointer; font-size: 1rem; line-height: 1; }
     .saved-filter-item:hover .delete-filter { opacity: 1; }
 
     .active-filters {
@@ -245,6 +243,54 @@
 
     .highlight { background: var(--accent-yellow); color: var(--bg-deep); padding: 0 2px; border-radius: 2px; }
 
+    .drop-zone {
+      border: 2px dashed var(--accent-green);
+      background: rgba(61, 214, 140, 0.1);
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--accent-green);
+    }
+    .drop-zone.active { display: flex; }
+
+    .backup-indicator {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: none;
+    }
+    .backup-indicator.show { display: block; }
+
+    .bulk-actions {
+      display: none;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .bulk-actions.active { display: flex; }
+    .bulk-count { font-size: 0.875rem; color: var(--text-secondary); margin-right: auto; }
+
+    .issue-checkbox {
+      width: 18px; height: 18px;
+      accent-color: var(--accent-green);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
     .content { padding: 2rem; overflow-y: auto; background: var(--bg-deep); }
 
     .content-header {
@@ -254,7 +300,7 @@
 
     .content-title { font-size: 1.25rem; font-weight: 600; }
 
-    .content-actions { display: flex; gap: 0.5rem; align-items: center; }
+    .content-actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
 
     .sort-select {
       padding: 0.5rem 1rem;
@@ -293,6 +339,8 @@
       right: 12px;
       font-size: 1rem;
     }
+
+    .issue-card.selected { border-color: var(--accent-green); background: rgba(61, 214, 140, 0.05); }
 
     .issue-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 0.75rem; }
     .issue-title { font-weight: 600; font-size: 1rem; flex: 1; line-height: 1.4; }
@@ -457,6 +505,23 @@
     .stat-value { font-size: 2rem; font-weight: 700; font-family: var(--font-mono); margin-bottom: 0.25rem; color: var(--accent-blue); }
     .stat-label { font-size: 0.8rem; color: var(--text-muted); }
 
+    .share-link {
+      display: flex; gap: 0.5rem; margin-top: 1rem;
+      padding: 0.75rem;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+    }
+    .share-link input {
+      flex: 1;
+      padding: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
     @media (max-width: 900px) {
       .main { grid-template-columns: 1fr; }
       .sidebar { display: none; }
@@ -473,6 +538,9 @@
   </style>
 </head>
 <body>
+  <div class="drop-zone" id="dropZone">📁 Drop JSON file to import</div>
+  <div class="backup-indicator" id="backupIndicator">💾 Auto-backup saved</div>
+
   <div class="app">
     <header class="header">
       <div class="logo">
@@ -489,51 +557,15 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn btn-secondary" onclick="exportData()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          Export
-        </button>
-        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="17 8 12 3 7 8"></polyline>
-            <line x1="12" y1="3" x2="12" y2="15"></line>
-          </svg>
-          Import
-        </button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleBulkMode()" id="bulkModeBtn">Select</button>
+        <button class="btn btn-secondary" onclick="exportData()">Export</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import</button>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-        <button class="btn btn-primary" onclick="openModal('add')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          New Issue
-        </button>
+        <button class="btn btn-primary" onclick="openModal('add')">+ New Issue</button>
       </div>
     </header>
-
     <main class="main">
       <aside class="sidebar">
-        <div class="sidebar-section">
-          <div class="sidebar-title">Recently Viewed</div>
-          <div class="recent-list" id="recentList"></div>
-        </div>
-
-        <div class="sidebar-section">
-          <div class="sidebar-title">
-            Date Range
-            <button class="btn btn-xs btn-secondary" onclick="clearDateFilter()">Clear</button>
-          </div>
-          <div class="date-filter">
-            <input type="date" class="date-input" id="dateFrom" onchange="applyDateFilter()" placeholder="From">
-            <input type="date" class="date-input" id="dateTo" onchange="applyDateFilter()" placeholder="To">
-          </div>
-        </div>
-
         <div class="sidebar-section">
           <div class="sidebar-title">Projects</div>
           <div class="filter-group" id="projectFilters"></div>
@@ -545,79 +577,92 @@
         </div>
 
         <div class="sidebar-section">
+          <div class="sidebar-title">Date Range</div>
+          <div class="date-filter">
+            <label style="font-size: 0.75rem; color: var(--text-muted);">From</label>
+            <input type="date" class="date-input" id="dateFrom" onchange="applyFilters()">
+            <label style="font-size: 0.75rem; color: var(--text-muted);">To</label>
+            <input type="date" class="date-input" id="dateTo" onchange="applyFilters()">
+          </div>
+        </div>
+
+        <div class="sidebar-section">
           <div class="sidebar-title">
             Saved Filters
-            <button class="btn btn-xs btn-secondary" onclick="saveCurrentFilter()">+ Save</button>
+            <button class="btn btn-xs btn-secondary" onclick="saveCurrentFilter()">Save</button>
           </div>
           <div class="saved-filters" id="savedFilters"></div>
         </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">Recently Viewed</div>
+          <div class="recent-list" id="recentlyViewed"></div>
+        </div>
       </aside>
 
-      <div class="content">
-        <div class="stat-card" style="margin-bottom: 2rem;">
-          <div class="stat-value" id="statTotal">0</div>
-          <div class="stat-label">Total Issues</div>
+      <section class="content">
+        <div id="activeFiltersContainer" class="active-filters" style="display: none;"></div>
+        
+        <div class="bulk-actions" id="bulkActions">
+          <span class="bulk-count"><span id="selectedCount">0</span> selected</span>
+          <button class="btn btn-sm btn-secondary" onclick="bulkEditProject()">Change Project</button>
+          <button class="btn btn-sm btn-secondary" onclick="bulkEditTags()">Add Tags</button>
+          <button class="btn btn-sm btn-danger" onclick="bulkDelete()">Delete</button>
+          <button class="btn btn-sm btn-secondary" onclick="cancelBulkMode()">Cancel</button>
         </div>
-
-        <div id="activeFiltersContainer" style="display: none;"></div>
 
         <div class="content-header">
           <h2 class="content-title" id="contentTitle">All Issues</h2>
           <div class="content-actions">
-            <button class="btn btn-sm btn-secondary" id="clearFiltersBtn" onclick="clearAllFilters()" style="display: none;">Clear Filters</button>
-            <select class="sort-select" id="sortSelect" onchange="renderIssues()">
+            <button class="btn btn-sm btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn" style="display: none;">Clear Filters</button>
+            <select class="sort-select" id="sortSelect" onchange="applyFilters()">
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
-              <option value="title">Alphabetical</option>
+              <option value="title">Title A-Z</option>
             </select>
           </div>
         </div>
 
         <div class="issues-list" id="issuesList"></div>
-      </div>
+      </section>
     </main>
   </div>
 
   <!-- Add/Edit Modal -->
-  <div class="modal-overlay" id="modalAdd">
+  <div class="modal-overlay" id="addModal">
     <div class="modal">
       <div class="modal-header">
-        <h3 class="modal-title" id="modalAddTitle">Log New Issue</h3>
+        <h3 class="modal-title" id="modalTitle">New Issue</h3>
         <button class="modal-close" onclick="closeModal('add')">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="editId">
-        
         <div class="form-group">
           <label class="form-label">Title *</label>
           <input type="text" class="form-input" id="issueTitle" placeholder="Brief description of the issue">
         </div>
-
         <div class="form-group">
           <label class="form-label">Error Message</label>
-          <textarea class="form-textarea" id="issueError" placeholder="Paste the error message or stack trace"></textarea>
+          <textarea class="form-textarea" id="issueError" placeholder="Paste the error message here"></textarea>
         </div>
-
         <div class="form-group">
-          <label class="form-label">Context</label>
-          <textarea class="form-textarea" id="issueContext" placeholder="What were you doing when this happened?" style="font-family: var(--font-sans)"></textarea>
+          <label class="form-label">Solution</label>
+          <textarea class="form-textarea" id="issueSolution" placeholder="How did you fix it?" style="min-height: 150px;"></textarea>
+          <div class="form-hint">Supports: **bold**, *italic*, `code`, ```code blocks```, [links](url)</div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Solution (Markdown supported)</label>
-          <textarea class="form-textarea" id="issueSolution" placeholder="How did you fix it? Use **bold**, `code`, ```code blocks```, [links](url)"></textarea>
-          <div class="form-hint">Supports: **bold**, *italic*, `inline code`, ```code blocks```, [links](url)</div>
-        </div>
-
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Project</label>
             <input type="text" class="form-input" id="issueProject" placeholder="e.g., my-app">
           </div>
           <div class="form-group">
-            <label class="form-label">Tags (comma separated)</label>
-            <input type="text" class="form-input" id="issueTags" placeholder="e.g., react, api, auth">
+            <label class="form-label">Tags</label>
+            <input type="text" class="form-input" id="issueTags" placeholder="react, api, bug (comma separated)">
           </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Additional Context</label>
+          <textarea class="form-textarea" id="issueContext" placeholder="Any additional notes, links, or context"></textarea>
         </div>
       </div>
       <div class="modal-footer">
@@ -628,7 +673,7 @@
   </div>
 
   <!-- Detail Modal -->
-  <div class="modal-overlay" id="modalDetail">
+  <div class="modal-overlay" id="detailModal">
     <div class="modal">
       <div class="modal-header">
         <h3 class="modal-title" id="detailTitle">Issue Details</h3>
@@ -637,218 +682,506 @@
       <div class="modal-body" id="detailBody"></div>
     </div>
   </div>
-</div>label></div>textarea>label></label></div>label></div></button></div>div></div>div>div>button>
 
   <script>
-    let issues = [];
-    let recentlyViewed = [];
-    let savedFilters = [];
-    let currentFilter = { project: null, tag: null, dateFrom: null, dateTo: null };
-    let searchQuery = '';
+    let issues = JSON.parse(localStorage.getItem('bugvault_issues') || '[]');
+    let recentlyViewed = JSON.parse(localStorage.getItem('bugvault_recent') || '[]');
+    let savedFilters = JSON.parse(localStorage.getItem('bugvault_saved_filters') || '[]');
+    let currentFilter = { project: null, tag: null, search: '', dateFrom: null, dateTo: null };
+    let bulkMode = false;
+    let selectedIssues = new Set();
+    let autoBackupInterval = null;
 
-    function init() {
-      loadData();
-      loadRecentlyViewed();
-      loadSavedFilters();
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSharedIssue();
+      renderFilters();
       renderIssues();
       renderRecentlyViewed();
       renderSavedFilters();
-      updateFilters();
-      updateStats();
-      
+      setupDragDrop();
+      setupAutoBackup();
       document.getElementById('searchInput').addEventListener('input', (e) => {
-        searchQuery = e.target.value.toLowerCase();
+        currentFilter.search = e.target.value;
+        applyFilters();
+      });
+    });
+
+    // Auto-backup setup
+    function setupAutoBackup() {
+      autoBackupInterval = setInterval(() => {
+        if (issues.length > 0) {
+          const backup = { issues, exportedAt: new Date().toISOString(), version: '2.0' };
+          localStorage.setItem('bugvault_auto_backup', JSON.stringify(backup));
+          showBackupIndicator();
+        }
+      }, 5 * 60 * 1000); // Every 5 minutes
+    }
+
+    function showBackupIndicator() {
+      const indicator = document.getElementById('backupIndicator');
+      indicator.classList.add('show');
+      setTimeout(() => indicator.classList.remove('show'), 2000);
+    }
+
+    // Drag & Drop
+    function setupDragDrop() {
+      const dropZone = document.getElementById('dropZone');
+      ['dragenter', 'dragover'].forEach(e => {
+        document.addEventListener(e, (ev) => { ev.preventDefault(); dropZone.classList.add('active'); });
+      });
+      ['dragleave', 'drop'].forEach(e => {
+        document.addEventListener(e, () => dropZone.classList.remove('active'));
+      });
+      document.addEventListener('drop', handleDrop);
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === 'application/json') {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const data = JSON.parse(ev.target.result);
+            const importedIssues = data.issues || data;
+            if (Array.isArray(importedIssues)) {
+              const count = importedIssues.length;
+              importedIssues.forEach(issue => {
+                if (!issue.id) issue.id = Date.now() + Math.random();
+                if (!issues.find(i => i.id === issue.id)) issues.push(issue);
+              });
+              saveIssues();
+              renderFilters();
+              renderIssues();
+              alert(`Imported ${count} issues via drag & drop!`);
+            }
+          } catch (err) { alert('Invalid JSON file'); }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    // Share issue as link
+    function shareIssue(id) {
+      const issue = issues.find(i => i.id === id);
+      if (!issue) return;
+      const encoded = btoa(encodeURIComponent(JSON.stringify(issue)));
+      const url = `${window.location.origin}${window.location.pathname}?share=${encoded}`;
+      const container = document.createElement('div');
+      container.className = 'share-link';
+      container.innerHTML = `<input type="text" value="${url}" readonly onclick="this.select()"><button class="btn btn-sm btn-primary" onclick="navigator.clipboard.writeText('${url}');this.textContent='Copied!'">Copy</button>`;
+      const detailBody = document.getElementById('detailBody');
+      const existing = detailBody.querySelector('.share-link');
+      if (existing) existing.remove();
+      detailBody.appendChild(container);
+    }
+
+    function loadSharedIssue() {
+      const params = new URLSearchParams(window.location.search);
+      const shared = params.get('share');
+      if (shared) {
+        try {
+          const issue = JSON.parse(decodeURIComponent(atob(shared)));
+          issue.id = Date.now();
+          if (confirm(`Import shared issue: "${issue.title}"?`)) {
+            issues.push(issue);
+            saveIssues();
+            window.history.replaceState({}, '', window.location.pathname);
+          }
+        } catch (e) { console.error('Invalid shared issue'); }
+      }
+    }
+
+    // Bulk mode functions
+    function toggleBulkMode() {
+      bulkMode = !bulkMode;
+      selectedIssues.clear();
+      document.getElementById('bulkModeBtn').textContent = bulkMode ? 'Cancel' : 'Select';
+      document.getElementById('bulkActions').classList.toggle('active', bulkMode);
+      renderIssues();
+    }
+
+    function cancelBulkMode() {
+      bulkMode = false;
+      selectedIssues.clear();
+      document.getElementById('bulkModeBtn').textContent = 'Select';
+      document.getElementById('bulkActions').classList.remove('active');
+      renderIssues();
+    }
+
+    function toggleIssueSelection(id, e) {
+      e.stopPropagation();
+      if (selectedIssues.has(id)) selectedIssues.delete(id);
+      else selectedIssues.add(id);
+      document.getElementById('selectedCount').textContent = selectedIssues.size;
+      renderIssues();
+    }
+
+    function bulkDelete() {
+      if (selectedIssues.size === 0) return alert('No issues selected');
+      if (confirm(`Delete ${selectedIssues.size} issues?`)) {
+        issues = issues.filter(i => !selectedIssues.has(i.id));
+        saveIssues();
+        cancelBulkMode();
+        renderFilters();
         renderIssues();
-      });
-    }
-
-    function loadData() {
-      const saved = localStorage.getItem('bugvault_issues');
-      if (saved) issues = JSON.parse(saved);
-    }
-
-    function saveData() {
-      localStorage.setItem('bugvault_issues', JSON.stringify(issues));
-    }
-
-    function loadRecentlyViewed() {
-      const saved = localStorage.getItem('bugvault_recent');
-      if (saved) recentlyViewed = JSON.parse(saved);
-    }
-
-    function saveRecentlyViewed() {
-      localStorage.setItem('bugvault_recent', JSON.stringify(recentlyViewed));
-    }
-
-    function loadSavedFilters() {
-      const saved = localStorage.getItem('bugvault_saved_filters');
-      if (saved) savedFilters = JSON.parse(saved);
-    }
-
-    function saveSavedFilters() {
-      localStorage.setItem('bugvault_saved_filters', JSON.stringify(savedFilters));
-    }
-
-    function addToRecentlyViewed(id) {
-      recentlyViewed = recentlyViewed.filter(r => r !== id);
-      recentlyViewed.unshift(id);
-      recentlyViewed = recentlyViewed.slice(0, 5);
-      saveRecentlyViewed();
-      renderRecentlyViewed();
-    }
-
-    function renderRecentlyViewed() {
-      const container = document.getElementById('recentList');
-      const recentIssues = recentlyViewed.map(id => issues.find(i => i.id === id)).filter(Boolean);
-      
-      if (recentIssues.length === 0) {
-        container.innerHTML = '<div class="recent-item" style="cursor: default; color: var(--text-muted);">No recent issues</div>';
-        return;
       }
-      
-      container.innerHTML = recentIssues.map(issue => `
-        <div class="recent-item" onclick="viewIssue('${issue.id}')">${escapeHtml(issue.title)}</div>
+    }
+
+    function bulkEditProject() {
+      if (selectedIssues.size === 0) return alert('No issues selected');
+      const project = prompt('Enter new project name:');
+      if (project) {
+        issues.forEach(i => { if (selectedIssues.has(i.id)) i.project = project; });
+        saveIssues();
+        cancelBulkMode();
+        renderFilters();
+        renderIssues();
+      }
+    }
+
+    function bulkEditTags() {
+      if (selectedIssues.size === 0) return alert('No issues selected');
+      const tags = prompt('Enter tags to add (comma separated):');
+      if (tags) {
+        const newTags = tags.split(',').map(t => t.trim()).filter(t => t);
+        issues.forEach(i => {
+          if (selectedIssues.has(i.id)) {
+            const existing = i.tags || [];
+            i.tags = [...new Set([...existing, ...newTags])];
+          }
+        });
+        saveIssues();
+        cancelBulkMode();
+        renderFilters();
+        renderIssues();
+      }
+    }
+
+    // Filter functions
+    function renderFilters() {
+      const projects = [...new Set(issues.map(i => i.project).filter(Boolean))];
+      const tags = [...new Set(issues.flatMap(i => i.tags || []))];
+
+      document.getElementById('projectFilters').innerHTML = `
+        <button class="filter-btn ${!currentFilter.project ? 'active' : ''}" onclick="filterByProject(null)">
+          <span>📁</span> All Projects <span class="filter-count">${issues.length}</span>
+        </button>
+        ${projects.map(p => `
+          <button class="filter-btn ${currentFilter.project === p ? 'active' : ''}" onclick="filterByProject('${p}')">
+            <span>📂</span> ${p} <span class="filter-count">${issues.filter(i => i.project === p).length}</span>
+          </button>
+        `).join('')}
+      `;
+
+      document.getElementById('tagFilters').innerHTML = tags.map(t => `
+        <span class="tag ${currentFilter.tag === t ? 'active' : ''}" onclick="filterByTag('${t}')">${t}</span>
       `).join('');
     }
 
-    function renderSavedFilters() {
-      const container = document.getElementById('savedFilters');
-      if (savedFilters.length === 0) {
-        container.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-muted);">No saved filters</div>';
-        return;
-      }
-      
-      container.innerHTML = savedFilters.map((filter, index) => `
-        <div class="saved-filter-item" onclick="applySavedFilter(${index})">
-          <span class="filter-name">${escapeHtml(filter.name)}</span>
-          <span class="delete-filter" onclick="event.stopPropagation(); deleteSavedFilter(${index})">&times;</span>
-        </div>
-      `).join('');
+    function filterByProject(project) {
+      currentFilter.project = project;
+      applyFilters();
     }
 
+    function filterByTag(tag) {
+      currentFilter.tag = currentFilter.tag === tag ? null : tag;
+      applyFilters();
+    }
+
+    function applyFilters() {
+      currentFilter.dateFrom = document.getElementById('dateFrom').value || null;
+      currentFilter.dateTo = document.getElementById('dateTo').value || null;
+      renderFilters();
+      renderIssues();
+      updateActiveFilters();
+    }
+
+    function updateActiveFilters() {
+      const container = document.getElementById('activeFiltersContainer');
+      const clearBtn = document.getElementById('clearFiltersBtn');
+      const hasFilters = currentFilter.project || currentFilter.tag || currentFilter.search || currentFilter.dateFrom || currentFilter.dateTo;
+      
+      container.style.display = hasFilters ? 'flex' : 'none';
+      clearBtn.style.display = hasFilters ? 'inline-flex' : 'none';
+      
+      let html = '';
+      if (currentFilter.project) html += `<span class="active-filter-tag">Project: ${currentFilter.project} <span class="remove" onclick="currentFilter.project=null;applyFilters()">×</span></span>`;
+      if (currentFilter.tag) html += `<span class="active-filter-tag">Tag: ${currentFilter.tag} <span class="remove" onclick="currentFilter.tag=null;applyFilters()">×</span></span>`;
+      if (currentFilter.search) html += `<span class="active-filter-tag">Search: ${currentFilter.search} <span class="remove" onclick="currentFilter.search='';document.getElementById('searchInput').value='';applyFilters()">×</span></span>`;
+      if (currentFilter.dateFrom) html += `<span class="active-filter-tag">From: ${currentFilter.dateFrom} <span class="remove" onclick="currentFilter.dateFrom=null;document.getElementById('dateFrom').value='';applyFilters()">×</span></span>`;
+      if (currentFilter.dateTo) html += `<span class="active-filter-tag">To: ${currentFilter.dateTo} <span class="remove" onclick="currentFilter.dateTo=null;document.getElementById('dateTo').value='';applyFilters()">×</span></span>`;
+      container.innerHTML = html;
+    }
+
+    function clearAllFilters() {
+      currentFilter = { project: null, tag: null, search: '', dateFrom: null, dateTo: null };
+      document.getElementById('searchInput').value = '';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      applyFilters();
+    }
+
+    // Saved filters
     function saveCurrentFilter() {
-      const hasFilters = currentFilter.project || currentFilter.tag || currentFilter.dateFrom || currentFilter.dateTo || searchQuery;
-      if (!hasFilters) {
-        alert('No active filters to save');
-        return;
-      }
-      
+      const hasFilters = currentFilter.project || currentFilter.tag || currentFilter.search || currentFilter.dateFrom || currentFilter.dateTo;
+      if (!hasFilters) return alert('No active filters to save');
       const name = prompt('Name this filter:');
-      if (!name) return;
-      
-      savedFilters.push({
-        name,
-        filter: { ...currentFilter },
-        search: searchQuery
-      });
-      saveSavedFilters();
-      renderSavedFilters();
+      if (name) {
+        savedFilters.push({ name, filter: { ...currentFilter } });
+        localStorage.setItem('bugvault_saved_filters', JSON.stringify(savedFilters));
+        renderSavedFilters();
+      }
     }
 
     function applySavedFilter(index) {
       const saved = savedFilters[index];
-      currentFilter = { ...saved.filter };
-      searchQuery = saved.search || '';
-      
-      document.getElementById('searchInput').value = searchQuery;
-      document.getElementById('dateFrom').value = currentFilter.dateFrom || '';
-      document.getElementById('dateTo').value = currentFilter.dateTo || '';
-      
-      renderIssues();
-      updateFilterUI();
+      if (saved) {
+        currentFilter = { ...saved.filter };
+        document.getElementById('searchInput').value = currentFilter.search || '';
+        document.getElementById('dateFrom').value = currentFilter.dateFrom || '';
+        document.getElementById('dateTo').value = currentFilter.dateTo || '';
+        applyFilters();
+      }
     }
 
-    function deleteSavedFilter(index) {
+    function deleteSavedFilter(index, e) {
+      e.stopPropagation();
       savedFilters.splice(index, 1);
-      saveSavedFilters();
+      localStorage.setItem('bugvault_saved_filters', JSON.stringify(savedFilters));
       renderSavedFilters();
     }
 
-    function applyDateFilter() {
-      currentFilter.dateFrom = document.getElementById('dateFrom').value || null;
-      currentFilter.dateTo = document.getElementById('dateTo').value || null;
-      renderIssues();
-      updateFilterUI();
+    function renderSavedFilters() {
+      document.getElementById('savedFilters').innerHTML = savedFilters.length === 0 
+        ? '<div style="font-size: 0.8rem; color: var(--text-muted);">No saved filters</div>'
+        : savedFilters.map((f, i) => `
+          <div class="saved-filter-item" onclick="applySavedFilter(${i})">
+            <span>🔖</span>
+            <span class="filter-name">${f.name}</span>
+            <span class="delete-filter" onclick="deleteSavedFilter(${i}, event)">×</span>
+          </div>
+        `).join('');
     }
 
-    function clearDateFilter() {
-      document.getElementById('dateFrom').value = '';
-      document.getElementById('dateTo').value = '';
-      currentFilter.dateFrom = null;
-      currentFilter.dateTo = null;
-      renderIssues();
-      updateFilterUI();
+    // Recently viewed
+    function addToRecentlyViewed(id) {
+      recentlyViewed = recentlyViewed.filter(r => r !== id);
+      recentlyViewed.unshift(id);
+      recentlyViewed = recentlyViewed.slice(0, 5);
+      localStorage.setItem('bugvault_recent', JSON.stringify(recentlyViewed));
+      renderRecentlyViewed();
     }
 
-    function clearAllFilters() {
-      currentFilter = { project: null, tag: null, dateFrom: null, dateTo: null };
-      searchQuery = '';
-      document.getElementById('searchInput').value = '';
-      document.getElementById('dateFrom').value = '';
-      document.getElementById('dateTo').value = '';
-      renderIssues();
-      updateFilterUI();
+    function renderRecentlyViewed() {
+      const recent = recentlyViewed.map(id => issues.find(i => i.id === id)).filter(Boolean);
+      document.getElementById('recentlyViewed').innerHTML = recent.length === 0
+        ? '<div style="font-size: 0.8rem; color: var(--text-muted);">No recent issues</div>'
+        : recent.map(i => `<div class="recent-item" onclick="viewIssue(${i.id})">${i.title}</div>`).join('');
     }
 
-    function updateFilterUI() {
-      // Update active filter buttons
-      document.querySelectorAll('.filter-btn[data-project]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.project === currentFilter.project);
-      });
-      document.querySelectorAll('.tag[data-tag]').forEach(tag => {
-        tag.classList.toggle('active', tag.dataset.tag === currentFilter.tag);
-      });
+    // Render issues
+    function renderIssues() {
+      let filtered = [...issues];
       
-      // Show/hide clear filters button
-      const hasFilters = currentFilter.project || currentFilter.tag || currentFilter.dateFrom || currentFilter.dateTo || searchQuery;
-      document.getElementById('clearFiltersBtn').style.display = hasFilters ? 'flex' : 'none';
-      
-      // Render active filters bar
-      renderActiveFilters();
-    }
+      if (currentFilter.project) filtered = filtered.filter(i => i.project === currentFilter.project);
+      if (currentFilter.tag) filtered = filtered.filter(i => (i.tags || []).includes(currentFilter.tag));
+      if (currentFilter.search) {
+        const s = currentFilter.search.toLowerCase();
+        filtered = filtered.filter(i => 
+          i.title.toLowerCase().includes(s) || 
+          (i.error || '').toLowerCase().includes(s) || 
+          (i.solution || '').toLowerCase().includes(s)
+        );
+      }
+      if (currentFilter.dateFrom) filtered = filtered.filter(i => new Date(i.createdAt) >= new Date(currentFilter.dateFrom));
+      if (currentFilter.dateTo) filtered = filtered.filter(i => new Date(i.createdAt) <= new Date(currentFilter.dateTo + 'T23:59:59'));
 
-    function renderActiveFilters() {
-      const container = document.getElementById('activeFiltersContainer');
-      const filters = [];
-      
-      if (searchQuery) filters.push({ type: 'search', label: `Search: "${searchQuery}"`, clear: () => { searchQuery = ''; document.getElementById('searchInput').value = ''; } });
-      if (currentFilter.project) filters.push({ type: 'project', label: `Project: ${currentFilter.project}`, clear: () => { currentFilter.project = null; } });
-      if (currentFilter.tag) filters.push({ type: 'tag', label: `Tag: ${currentFilter.tag}`, clear: () => { currentFilter.tag = null; } });
-      if (currentFilter.dateFrom) filters.push({ type: 'dateFrom', label: `From: ${currentFilter.dateFrom}`, clear: () => { currentFilter.dateFrom = null; document.getElementById('dateFrom').value = ''; } });
-      if (currentFilter.dateTo) filters.push({ type: 'dateTo', label: `To: ${currentFilter.dateTo}`, clear: () => { currentFilter.dateTo = null; document.getElementById('dateTo').value = ''; } });
-      
-      if (filters.length === 0) {
-        container.style.display = 'none';
+      // Sort
+      const sort = document.getElementById('sortSelect').value;
+      if (sort === 'newest') filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      else if (sort === 'oldest') filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      else if (sort === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title));
+
+      // Pinned first
+      filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+      document.getElementById('contentTitle').textContent = `All Issues (${filtered.length})`;
+
+      if (filtered.length === 0) {
+        document.getElementById('issuesList').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-title">No issues found</div>
+            <p>Try adjusting your filters or add a new issue</p>
+          </div>
+        `;
         return;
       }
-      
-      container.style.display = 'block';
-      container.innerHTML = `
-        <div class="active-filters">
-          ${filters.map((f, i) => `
-            <span class="active-filter-tag">
-              ${escapeHtml(f.label)}
-              <span class="remove" onclick="removeFilter(${i})">&times;</span>
-            </span>
-          `).join('')}
+
+      document.getElementById('issuesList').innerHTML = filtered.map(issue => `
+        <div class="issue-card ${issue.pinned ? 'pinned' : ''} ${selectedIssues.has(issue.id) ? 'selected' : ''}" onclick="${bulkMode ? '' : `viewIssue(${issue.id})`}">
+          <div class="issue-header">
+            ${bulkMode ? `<input type="checkbox" class="issue-checkbox" ${selectedIssues.has(issue.id) ? 'checked' : ''} onclick="toggleIssueSelection(${issue.id}, event)">` : ''}
+            <div class="issue-title">${highlightText(issue.title)}</div>
+            <div class="issue-date">${formatDate(issue.createdAt)}</div>
+          </div>
+          ${issue.error ? `<div class="issue-error">${highlightText(issue.error)}</div>` : ''}
+          <div class="issue-meta">
+            ${issue.project ? `<div class="issue-project"><span>📁</span> ${issue.project}</div>` : ''}
+            <div class="issue-tags">
+              ${(issue.tags || []).map(t => `<span class="issue-tag">${t}</span>`).join('')}
+            </div>
+          </div>
         </div>
-      `;
-      
-      // Store filter clear functions
-      window._activeFilters = filters;
+      `).join('');
     }
 
-    function removeFilter(index) {
-      if (window._activeFilters && window._activeFilters[index]) {
-        window._activeFilters[index].clear();
-        renderIssues();
-        updateFilterUI();
+    function highlightText(text) {
+      if (!currentFilter.search || !text) return text;
+      const regex = new RegExp(`(${currentFilter.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    // View issue detail
+    function viewIssue(id) {
+      const issue = issues.find(i => i.id === id);
+      if (!issue) return;
+      addToRecentlyViewed(id);
+
+      document.getElementById('detailTitle').textContent = issue.title;
+      document.getElementById('detailBody').innerHTML = `
+        ${issue.error ? `<div class="detail-section"><div class="detail-label">Error Message</div><div class="detail-error">${issue.error}</div></div>` : ''}
+        ${issue.solution ? `<div class="detail-section"><div class="detail-label">Solution</div><div class="detail-solution">${parseMarkdown(issue.solution)}</div></div>` : ''}
+        ${issue.context ? `<div class="detail-section"><div class="detail-label">Context</div><div class="detail-context">${issue.context}</div></div>` : ''}
+        <div class="detail-meta">
+          <div class="detail-meta-item"><div class="detail-meta-label">Project</div><div class="detail-meta-value">${issue.project || 'None'}</div></div>
+          <div class="detail-meta-item"><div class="detail-meta-label">Tags</div><div class="detail-meta-value">${(issue.tags || []).join(', ') || 'None'}</div></div>
+          <div class="detail-meta-item"><div class="detail-meta-label">Created</div><div class="detail-meta-value">${formatDate(issue.createdAt)}</div></div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn btn-secondary" onclick="editIssue(${id})">✏️ Edit</button>
+          <button class="btn btn-secondary" onclick="duplicateIssue(${id})">📋 Duplicate</button>
+          <button class="btn btn-${issue.pinned ? 'warning' : 'secondary'}" onclick="togglePin(${id})">${issue.pinned ? '📌 Unpin' : '📌 Pin'}</button>
+          <button class="btn btn-secondary" onclick="shareIssue(${id})">🔗 Share</button>
+          <button class="btn btn-danger" onclick="deleteIssue(${id})">🗑️ Delete</button>
+        </div>
+      `;
+      openModal('detail');
+    }
+
+    function parseMarkdown(text) {
+      if (!text) return '';
+      return text
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function formatDate(date) {
+      return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // CRUD operations
+    function openModal(type) {
+      document.getElementById(type + 'Modal').classList.add('active');
+    }
+
+    function closeModal(type) {
+      document.getElementById(type + 'Modal').classList.remove('active');
+      if (type === 'add') {
+        document.getElementById('editId').value = '';
+        document.getElementById('issueTitle').value = '';
+        document.getElementById('issueError').value = '';
+        document.getElementById('issueSolution').value = '';
+        document.getElementById('issueProject').value = '';
+        document.getElementById('issueTags').value = '';
+        document.getElementById('issueContext').value = '';
+        document.getElementById('modalTitle').textContent = 'New Issue';
       }
     }
 
+    function saveIssue() {
+      const title = document.getElementById('issueTitle').value.trim();
+      if (!title) return alert('Title is required');
+
+      const editId = document.getElementById('editId').value;
+      const issueData = {
+        title,
+        error: document.getElementById('issueError').value.trim(),
+        solution: document.getElementById('issueSolution').value.trim(),
+        project: document.getElementById('issueProject').value.trim(),
+        tags: document.getElementById('issueTags').value.split(',').map(t => t.trim()).filter(t => t),
+        context: document.getElementById('issueContext').value.trim()
+      };
+
+      if (editId) {
+        const index = issues.findIndex(i => i.id === parseInt(editId));
+        if (index !== -1) issues[index] = { ...issues[index], ...issueData };
+      } else {
+        issues.push({ id: Date.now(), ...issueData, createdAt: new Date().toISOString(), pinned: false });
+      }
+
+      saveIssues();
+      closeModal('add');
+      renderFilters();
+      renderIssues();
+    }
+
+    function editIssue(id) {
+      const issue = issues.find(i => i.id === id);
+      if (!issue) return;
+      closeModal('detail');
+      document.getElementById('editId').value = id;
+      document.getElementById('issueTitle').value = issue.title;
+      document.getElementById('issueError').value = issue.error || '';
+      document.getElementById('issueSolution').value = issue.solution || '';
+      document.getElementById('issueProject').value = issue.project || '';
+      document.getElementById('issueTags').value = (issue.tags || []).join(', ');
+      document.getElementById('issueContext').value = issue.context || '';
+      document.getElementById('modalTitle').textContent = 'Edit Issue';
+      openModal('add');
+    }
+
+    function deleteIssue(id) {
+      if (confirm('Delete this issue?')) {
+        issues = issues.filter(i => i.id !== id);
+        saveIssues();
+        closeModal('detail');
+        renderFilters();
+        renderIssues();
+      }
+    }
+
+    function duplicateIssue(id) {
+      const issue = issues.find(i => i.id === id);
+      if (!issue) return;
+      const copy = { ...issue, id: Date.now(), title: issue.title + ' (copy)', createdAt: new Date().toISOString(), pinned: false };
+      issues.push(copy);
+      saveIssues();
+      closeModal('detail');
+      renderFilters();
+      renderIssues();
+    }
+
+    function togglePin(id) {
+      const issue = issues.find(i => i.id === id);
+      if (issue) {
+        issue.pinned = !issue.pinned;
+        saveIssues();
+        closeModal('detail');
+        renderIssues();
+      }
+    }
+
+    // Import/Export
     function exportData() {
-      const data = JSON.stringify(issues, null, 2);
-      const blob = new Blob([data], { type: 'application/json' });
+      const data = { issues, exportedAt: new Date().toISOString(), version: '2.0' };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -860,22 +1193,21 @@
     function importData(event) {
       const file = event.target.files[0];
       if (!file) return;
-      
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const imported = JSON.parse(e.target.result);
-          if (Array.isArray(imported)) {
-            if (confirm(`Import ${imported.length} issues? This will merge with existing data.`)) {
-              const existingIds = new Set(issues.map(i => i.id));
-              const newIssues = imported.filter(i => !existingIds.has(i.id));
-              issues = [...issues, ...newIssues];
-              saveData();
-              renderIssues();
-              updateFilters();
-              updateStats();
-              alert(`Imported ${newIssues.length} new issues.`);
-            }
+          const data = JSON.parse(e.target.result);
+          const importedIssues = data.issues || data;
+          if (Array.isArray(importedIssues)) {
+            const count = importedIssues.length;
+            importedIssues.forEach(issue => {
+              if (!issue.id) issue.id = Date.now() + Math.random();
+              if (!issues.find(i => i.id === issue.id)) issues.push(issue);
+            });
+            saveIssues();
+            renderFilters();
+            renderIssues();
+            alert(`Imported ${count} issues!`);
           }
         } catch (err) { alert('Invalid JSON file'); }
       };
@@ -883,355 +1215,9 @@
       event.target.value = '';
     }
 
-    function openModal(type) {
-      document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
-      document.body.style.overflow = 'hidden';
+    function saveIssues() {
+      localStorage.setItem('bugvault_issues', JSON.stringify(issues));
     }
-
-    function closeModal(type) {
-      document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove('active');
-      document.body.style.overflow = '';
-      if (type === 'add') clearForm();
-    }
-
-    function clearForm() {
-      document.getElementById('editId').value = '';
-      document.getElementById('issueTitle').value = '';
-      document.getElementById('issueError').value = '';
-      document.getElementById('issueContext').value = '';
-      document.getElementById('issueSolution').value = '';
-      document.getElementById('issueProject').value = '';
-      document.getElementById('issueTags').value = '';
-      document.getElementById('modalAddTitle').textContent = 'Log New Issue';
-    }
-
-    function saveIssue() {
-      const title = document.getElementById('issueTitle').value.trim();
-      if (!title) { alert('Title is required'); return; }
-
-      const editId = document.getElementById('editId').value;
-      const existingIssue = editId ? issues.find(i => i.id === editId) : null;
-      
-      const issue = {
-        id: editId || Date.now().toString(),
-        title,
-        error: document.getElementById('issueError').value.trim(),
-        context: document.getElementById('issueContext').value.trim(),
-        solution: document.getElementById('issueSolution').value.trim(),
-        project: document.getElementById('issueProject').value.trim(),
-        tags: document.getElementById('issueTags').value.split(',').map(t => t.trim()).filter(Boolean),
-        pinned: existingIssue?.pinned || false,
-        createdAt: existingIssue?.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      if (editId) {
-        const index = issues.findIndex(i => i.id === editId);
-        if (index !== -1) issues[index] = issue;
-      } else {
-        issues.unshift(issue);
-      }
-
-      saveData();
-      closeModal('add');
-      renderIssues();
-      updateFilters();
-      updateStats();
-    }
-
-    function duplicateIssue(id) {
-      const issue = issues.find(i => i.id === id);
-      if (!issue) return;
-
-      const duplicate = {
-        ...issue,
-        id: Date.now().toString(),
-        title: `${issue.title} (copy)`,
-        pinned: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      issues.unshift(duplicate);
-      saveData();
-      closeModal('detail');
-      renderIssues();
-      updateFilters();
-      updateStats();
-    }
-
-    function togglePin(id) {
-      const issue = issues.find(i => i.id === id);
-      if (issue) {
-        issue.pinned = !issue.pinned;
-        issue.updatedAt = new Date().toISOString();
-        saveData();
-        closeModal('detail');
-        renderIssues();
-      }
-    }
-
-    function setFilter(type, value) {
-      if (type === 'project') {
-        currentFilter.project = currentFilter.project === value ? null : value;
-      } else if (type === 'tag') {
-        currentFilter.tag = currentFilter.tag === value ? null : value;
-      }
-      renderIssues();
-      updateFilterUI();
-    }
-
-    function getFilteredIssues() {
-      return issues.filter(issue => {
-        if (currentFilter.project && issue.project !== currentFilter.project) return false;
-        if (currentFilter.tag && !issue.tags.includes(currentFilter.tag)) return false;
-        
-        // Date range filter
-        if (currentFilter.dateFrom) {
-          const issueDate = new Date(issue.createdAt).toISOString().split('T')[0];
-          if (issueDate < currentFilter.dateFrom) return false;
-        }
-        if (currentFilter.dateTo) {
-          const issueDate = new Date(issue.createdAt).toISOString().split('T')[0];
-          if (issueDate > currentFilter.dateTo) return false;
-        }
-        
-        if (searchQuery) {
-          const searchable = [issue.title, issue.error, issue.context, issue.solution, issue.project, ...issue.tags].join(' ').toLowerCase();
-          if (!searchable.includes(searchQuery)) return false;
-        }
-        return true;
-      });
-    }
-
-    function highlightText(text, query) {
-      if (!query || !text) return escapeHtml(text);
-      const escaped = escapeHtml(text);
-      const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-      return escaped.replace(regex, '<span class="highlight">$1</span>');
-    }
-
-    function escapeRegex(str) {
-      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
-    function renderIssues() {
-      const filtered = getFilteredIssues();
-      const sort = document.getElementById('sortSelect').value;
-      
-      filtered.sort((a, b) => {
-        if (a.pinned && !b.pinned) return -1;
-        if (!a.pinned && b.pinned) return 1;
-        if (sort === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
-        if (sort === 'oldest') return new Date(a.createdAt) - new Date(b.createdAt);
-        if (sort === 'title') return a.title.localeCompare(b.title);
-        return 0;
-      });
-
-      const list = document.getElementById('issuesList');
-      
-      if (filtered.length === 0) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📋</div>
-            <div class="empty-title">No issues found</div>
-            <p>Start logging issues to build your knowledge base</p>
-          </div>
-        `;
-        document.getElementById('contentTitle').textContent = 'All Issues (0)';
-        updateFilterUI();
-        return;
-      }
-
-      list.innerHTML = filtered.map(issue => `
-        <div class="issue-card ${issue.pinned ? 'pinned' : ''}" onclick="viewIssue('${issue.id}')">
-          <div class="issue-header">
-            <div class="issue-title">${highlightText(issue.title, searchQuery)}</div>
-            <div class="issue-date">${formatDate(issue.createdAt)}</div>
-          </div>
-          ${issue.error ? `<div class="issue-error">${highlightText(issue.error, searchQuery)}</div>` : ''}
-          <div class="issue-meta">
-            ${issue.project ? `
-              <div class="issue-project">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
-                ${highlightText(issue.project, searchQuery)}
-              </div>
-            ` : ''}
-            ${issue.tags.length ? `
-              <div class="issue-tags">
-                ${issue.tags.map(tag => `<span class="issue-tag">${highlightText(tag, searchQuery)}</span>`).join('')}
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      `).join('');
-
-      let title = 'All Issues';
-      if (currentFilter.project) title = `Project: ${currentFilter.project}`;
-      if (currentFilter.tag) title = `Tag: ${currentFilter.tag}`;
-      document.getElementById('contentTitle').textContent = `${title} (${filtered.length})`;
-      updateFilterUI();
-    }
-
-    function updateFilters() {
-      const projects = [...new Set(issues.map(i => i.project).filter(Boolean))];
-      document.getElementById('projectFilters').innerHTML = projects.map(project => `
-        <button class="filter-btn ${currentFilter.project === project ? 'active' : ''}" 
-                data-project="${escapeHtml(project)}" 
-                onclick="setFilter('project', '${escapeHtml(project)}')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
-          ${escapeHtml(project)}
-          <span class="filter-count">${issues.filter(i => i.project === project).length}</span>
-        </button>
-      `).join('');
-
-      const tags = [...new Set(issues.flatMap(i => i.tags))];
-      document.getElementById('tagFilters').innerHTML = tags.map(tag => `
-        <span class="tag ${currentFilter.tag === tag ? 'active' : ''}" 
-              data-tag="${escapeHtml(tag)}" 
-              onclick="setFilter('tag', '${escapeHtml(tag)}')">${escapeHtml(tag)}</span>
-      `).join('');
-    }
-
-    function updateStats() {
-      document.getElementById('statTotal').textContent = issues.length;
-    }
-
-    function parseMarkdown(text) {
-      if (!text) return '';
-      let html = escapeHtml(text);
-      html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-      html = html.replace(/\n/g, '<br>');
-      return html;
-    }
-
-    function viewIssue(id) {
-      const issue = issues.find(i => i.id === id);
-      if (!issue) return;
-
-      addToRecentlyViewed(id);
-
-      document.getElementById('detailTitle').textContent = issue.title;
-      document.getElementById('detailBody').innerHTML = `
-        ${issue.error ? `
-          <div class="detail-section">
-            <div class="detail-label">Error Message</div>
-            <div class="detail-error">${escapeHtml(issue.error)}</div>
-          </div>
-        ` : ''}
-        ${issue.context ? `
-          <div class="detail-section">
-            <div class="detail-label">Context</div>
-            <div class="detail-context">${escapeHtml(issue.context)}</div>
-          </div>
-        ` : ''}
-        ${issue.solution ? `
-          <div class="detail-section">
-            <div class="detail-label">Solution</div>
-            <div class="detail-solution">${parseMarkdown(issue.solution)}</div>
-          </div>
-        ` : ''}
-        <div class="detail-meta">
-          ${issue.project ? `
-            <div class="detail-meta-item">
-              <span class="detail-meta-label">Project</span>
-              <span class="detail-meta-value">${escapeHtml(issue.project)}</span>
-            </div>
-          ` : ''}
-          <div class="detail-meta-item">
-            <span class="detail-meta-label">Created</span>
-            <span class="detail-meta-value">${formatDate(issue.createdAt)}</span>
-          </div>
-          ${issue.tags.length ? `
-            <div class="detail-meta-item">
-              <span class="detail-meta-label">Tags</span>
-              <span class="detail-meta-value">${issue.tags.join(', ')}</span>
-            </div>
-          ` : ''}
-        </div>
-        <div class="detail-actions">
-          <button class="btn btn-primary" onclick="editIssue('${issue.id}')">Edit</button>
-          <button class="btn btn-secondary" onclick="duplicateIssue('${issue.id}')">Duplicate</button>
-          <button class="btn btn-warning" onclick="togglePin('${issue.id}')">${issue.pinned ? 'Unpin' : 'Pin'}</button>
-          <button class="btn btn-danger" onclick="deleteIssue('${issue.id}')">Delete</button>
-        </div>
-      `;
-      openModal('detail');
-    }
-
-    function editIssue(id) {
-      const issue = issues.find(i => i.id === id);
-      if (!issue) return;
-
-      closeModal('detail');
-      
-      document.getElementById('editId').value = issue.id;
-      document.getElementById('issueTitle').value = issue.title;
-      document.getElementById('issueError').value = issue.error;
-      document.getElementById('issueContext').value = issue.context;
-      document.getElementById('issueSolution').value = issue.solution;
-      document.getElementById('issueProject').value = issue.project;
-      document.getElementById('issueTags').value = issue.tags.join(', ');
-      document.getElementById('modalAddTitle').textContent = 'Edit Issue';
-
-      openModal('add');
-    }
-
-    function deleteIssue(id) {
-      if (confirm('Delete this issue permanently?')) {
-        issues = issues.filter(i => i.id !== id);
-        recentlyViewed = recentlyViewed.filter(r => r !== id);
-        saveData();
-        saveRecentlyViewed();
-        closeModal('detail');
-        renderIssues();
-        renderRecentlyViewed();
-        updateFilters();
-        updateStats();
-      }
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/[&<>"']/g, (m) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m]));
-    }
-
-    function formatDate(iso) {
-      const date = new Date(iso);
-      const now = new Date();
-      const diff = now - date;
-      
-      if (diff < 86400000) {
-        const hours = Math.floor(diff / 3600000);
-        if (hours < 1) return 'Just now';
-        return `${hours}h ago`;
-      }
-      if (diff < 604800000) {
-        const days = Math.floor(diff / 86400000);
-        return `${days}d ago`;
-      }
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeModal('add'); closeModal('detail'); }
-    });
-
-    document.querySelectorAll('.modal-overlay').forEach(overlay => {
-      overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) { closeModal('add'); closeModal('detail'); }
-      });
-    });
-
-    init();
   </script>
 </body>
 </html>
