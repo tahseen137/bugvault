@@ -694,7 +694,7 @@
       let title = 'All Issues';
       if (currentFilter.project) title = `Project: ${currentFilter.project}`;
       if (currentFilter.tag) title = `Tag: ${currentFilter.tag}`;
-      document.getElementById('contentTitle').textContent = title;
+      document.getElementById('contentTitle').textContent = `${title} (${filtered.length})`;
     }
 
     function updateFilters() {
