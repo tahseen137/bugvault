@@ -776,7 +776,7 @@
 
     // Share issue as link
     function shareIssue(id) {
-      const issue = issues.find(i => i.id === id);
+      const issue = issues.find(i => String(i.id) === String(id));
       if (!issue) return;
       const encoded = btoa(encodeURIComponent(JSON.stringify(issue)));
       const url = `${window.location.origin}${window.location.pathname}?share=${encoded}`;
@@ -1058,7 +1058,9 @@
 
     // View issue detail
     function viewIssue(id) {
-      const issue = issues.find(i => i.id === id);
+      console.log('viewIssue called with id:', id, typeof id);
+      const issue = issues.find(i => String(i.id) === String(id));
+      console.log('Found issue:', issue);
       if (!issue) return;
       addToRecentlyViewed(id);
 
@@ -1145,7 +1147,7 @@
     }
 
     function editIssue(id) {
-      const issue = issues.find(i => i.id === id);
+      const issue = issues.find(i => String(i.id) === String(id));
       if (!issue) return;
       closeModal('detail');
       document.getElementById('editId').value = id;
@@ -1170,7 +1172,7 @@
     }
 
     function duplicateIssue(id) {
-      const issue = issues.find(i => i.id === id);
+      const issue = issues.find(i => String(i.id) === String(id));
       if (!issue) return;
       const copy = { ...issue, id: Date.now(), title: issue.title + ' (copy)', createdAt: new Date().toISOString(), pinned: false };
       issues.push(copy);
@@ -1181,7 +1183,7 @@
     }
 
     function togglePin(id) {
-      const issue = issues.find(i => i.id === id);
+      const issue = issues.find(i => String(i.id) === String(id));
       if (issue) {
         issue.pinned = !issue.pinned;
         saveIssues();
