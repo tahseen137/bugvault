@@ -24,6 +24,7 @@
       --accent-orange: #f5a623;
       --accent-blue: #5c9eff;
       --accent-purple: #a78bfa;
+      --accent-yellow: #fbbf24;
       --font-mono: 'JetBrains Mono', monospace;
       --font-sans: 'Space Grotesk', sans-serif;
     }
@@ -122,6 +123,7 @@
     .btn-warning { background: transparent; color: var(--accent-orange); border: 1px solid var(--accent-orange); }
     .btn-warning:hover { background: var(--accent-orange); color: var(--bg-deep); }
     .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.8rem; }
+    .btn-xs { padding: 0.25rem 0.5rem; font-size: 0.7rem; }
 
     .main { display: grid; grid-template-columns: 280px 1fr; overflow: hidden; }
 
@@ -141,6 +143,9 @@
       color: var(--text-muted);
       margin-bottom: 0.75rem;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .filter-group { display: flex; flex-direction: column; gap: 0.25rem; }
@@ -190,14 +195,66 @@
     }
     .recent-item:hover { color: var(--text-primary); background: var(--border); }
 
+    .date-filter { display: flex; flex-direction: column; gap: 0.5rem; }
+    .date-input {
+      padding: 0.5rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+    .date-input:focus { outline: none; border-color: var(--accent-green); }
+
+    .saved-filters { display: flex; flex-direction: column; gap: 0.5rem; }
+    .saved-filter-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .saved-filter-item:hover { color: var(--text-primary); background: var(--border); }
+    .saved-filter-item .filter-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .saved-filter-item .delete-filter {
+      opacity: 0; color: var(--accent-red); cursor: pointer; font-size: 1rem; line-height: 1;
+    }
+    .saved-filter-item:hover .delete-filter { opacity: 1; }
+
+    .active-filters {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .active-filter-tag {
+      display: flex; align-items: center; gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--accent-blue);
+      color: var(--bg-deep);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .active-filter-tag .remove { cursor: pointer; font-weight: bold; margin-left: 0.25rem; }
+
+    .highlight { background: var(--accent-yellow); color: var(--bg-deep); padding: 0 2px; border-radius: 2px; }
+
     .content { padding: 2rem; overflow-y: auto; background: var(--bg-deep); }
 
     .content-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
     }
 
     .content-title { font-size: 1.25rem; font-weight: 600; }
+
+    .content-actions { display: flex; gap: 0.5rem; align-items: center; }
 
     .sort-select {
       padding: 0.5rem 1rem;
@@ -368,17 +425,8 @@
       margin: 0.75rem 0;
     }
 
-    .detail-solution pre code {
-      background: none;
-      padding: 0;
-      color: var(--text-primary);
-    }
-
-    .detail-solution a {
-      color: var(--accent-blue);
-      text-decoration: none;
-    }
-
+    .detail-solution pre code { background: none; padding: 0; color: var(--text-primary); }
+    .detail-solution a { color: var(--accent-blue); text-decoration: none; }
     .detail-solution a:hover { text-decoration: underline; }
 
     .detail-context { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
@@ -476,6 +524,17 @@
         </div>
 
         <div class="sidebar-section">
+          <div class="sidebar-title">
+            Date Range
+            <button class="btn btn-xs btn-secondary" onclick="clearDateFilter()">Clear</button>
+          </div>
+          <div class="date-filter">
+            <input type="date" class="date-input" id="dateFrom" onchange="applyDateFilter()" placeholder="From">
+            <input type="date" class="date-input" id="dateTo" onchange="applyDateFilter()" placeholder="To">
+          </div>
+        </div>
+
+        <div class="sidebar-section">
           <div class="sidebar-title">Projects</div>
           <div class="filter-group" id="projectFilters"></div>
         </div>
@@ -483,6 +542,14 @@
         <div class="sidebar-section">
           <div class="sidebar-title">Tags</div>
           <div class="tag-list" id="tagFilters"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">
+            Saved Filters
+            <button class="btn btn-xs btn-secondary" onclick="saveCurrentFilter()">+ Save</button>
+          </div>
+          <div class="saved-filters" id="savedFilters"></div>
         </div>
       </aside>
 
@@ -492,13 +559,18 @@
           <div class="stat-label">Total Issues</div>
         </div>
 
+        <div id="activeFiltersContainer" style="display: none;"></div>
+
         <div class="content-header">
           <h2 class="content-title" id="contentTitle">All Issues</h2>
-          <select class="sort-select" id="sortSelect" onchange="renderIssues()">
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="title">Alphabetical</option>
-          </select>
+          <div class="content-actions">
+            <button class="btn btn-sm btn-secondary" id="clearFiltersBtn" onclick="clearAllFilters()" style="display: none;">Clear Filters</button>
+            <select class="sort-select" id="sortSelect" onchange="renderIssues()">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="title">Alphabetical</option>
+            </select>
+          </div>
         </div>
 
         <div class="issues-list" id="issuesList"></div>
@@ -565,18 +637,22 @@
       <div class="modal-body" id="detailBody"></div>
     </div>
   </div>
+</div>label></div>textarea>label></label></div>label></div></button></div>div></div>div>div>button>
 
   <script>
     let issues = [];
     let recentlyViewed = [];
-    let currentFilter = { project: null, tag: null };
+    let savedFilters = [];
+    let currentFilter = { project: null, tag: null, dateFrom: null, dateTo: null };
     let searchQuery = '';
 
     function init() {
       loadData();
       loadRecentlyViewed();
+      loadSavedFilters();
       renderIssues();
       renderRecentlyViewed();
+      renderSavedFilters();
       updateFilters();
       updateStats();
       
@@ -604,6 +680,15 @@
       localStorage.setItem('bugvault_recent', JSON.stringify(recentlyViewed));
     }
 
+    function loadSavedFilters() {
+      const saved = localStorage.getItem('bugvault_saved_filters');
+      if (saved) savedFilters = JSON.parse(saved);
+    }
+
+    function saveSavedFilters() {
+      localStorage.setItem('bugvault_saved_filters', JSON.stringify(savedFilters));
+    }
+
     function addToRecentlyViewed(id) {
       recentlyViewed = recentlyViewed.filter(r => r !== id);
       recentlyViewed.unshift(id);
@@ -624,6 +709,141 @@
       container.innerHTML = recentIssues.map(issue => `
         <div class="recent-item" onclick="viewIssue('${issue.id}')">${escapeHtml(issue.title)}</div>
       `).join('');
+    }
+
+    function renderSavedFilters() {
+      const container = document.getElementById('savedFilters');
+      if (savedFilters.length === 0) {
+        container.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-muted);">No saved filters</div>';
+        return;
+      }
+      
+      container.innerHTML = savedFilters.map((filter, index) => `
+        <div class="saved-filter-item" onclick="applySavedFilter(${index})">
+          <span class="filter-name">${escapeHtml(filter.name)}</span>
+          <span class="delete-filter" onclick="event.stopPropagation(); deleteSavedFilter(${index})">&times;</span>
+        </div>
+      `).join('');
+    }
+
+    function saveCurrentFilter() {
+      const hasFilters = currentFilter.project || currentFilter.tag || currentFilter.dateFrom || currentFilter.dateTo || searchQuery;
+      if (!hasFilters) {
+        alert('No active filters to save');
+        return;
+      }
+      
+      const name = prompt('Name this filter:');
+      if (!name) return;
+      
+      savedFilters.push({
+        name,
+        filter: { ...currentFilter },
+        search: searchQuery
+      });
+      saveSavedFilters();
+      renderSavedFilters();
+    }
+
+    function applySavedFilter(index) {
+      const saved = savedFilters[index];
+      currentFilter = { ...saved.filter };
+      searchQuery = saved.search || '';
+      
+      document.getElementById('searchInput').value = searchQuery;
+      document.getElementById('dateFrom').value = currentFilter.dateFrom || '';
+      document.getElementById('dateTo').value = currentFilter.dateTo || '';
+      
+      renderIssues();
+      updateFilterUI();
+    }
+
+    function deleteSavedFilter(index) {
+      savedFilters.splice(index, 1);
+      saveSavedFilters();
+      renderSavedFilters();
+    }
+
+    function applyDateFilter() {
+      currentFilter.dateFrom = document.getElementById('dateFrom').value || null;
+      currentFilter.dateTo = document.getElementById('dateTo').value || null;
+      renderIssues();
+      updateFilterUI();
+    }
+
+    function clearDateFilter() {
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      currentFilter.dateFrom = null;
+      currentFilter.dateTo = null;
+      renderIssues();
+      updateFilterUI();
+    }
+
+    function clearAllFilters() {
+      currentFilter = { project: null, tag: null, dateFrom: null, dateTo: null };
+      searchQuery = '';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      renderIssues();
+      updateFilterUI();
+    }
+
+    function updateFilterUI() {
+      // Update active filter buttons
+      document.querySelectorAll('.filter-btn[data-project]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.project === currentFilter.project);
+      });
+      document.querySelectorAll('.tag[data-tag]').forEach(tag => {
+        tag.classList.toggle('active', tag.dataset.tag === currentFilter.tag);
+      });
+      
+      // Show/hide clear filters button
+      const hasFilters = currentFilter.project || currentFilter.tag || currentFilter.dateFrom || currentFilter.dateTo || searchQuery;
+      document.getElementById('clearFiltersBtn').style.display = hasFilters ? 'flex' : 'none';
+      
+      // Render active filters bar
+      renderActiveFilters();
+    }
+
+    function renderActiveFilters() {
+      const container = document.getElementById('activeFiltersContainer');
+      const filters = [];
+      
+      if (searchQuery) filters.push({ type: 'search', label: `Search: "${searchQuery}"`, clear: () => { searchQuery = ''; document.getElementById('searchInput').value = ''; } });
+      if (currentFilter.project) filters.push({ type: 'project', label: `Project: ${currentFilter.project}`, clear: () => { currentFilter.project = null; } });
+      if (currentFilter.tag) filters.push({ type: 'tag', label: `Tag: ${currentFilter.tag}`, clear: () => { currentFilter.tag = null; } });
+      if (currentFilter.dateFrom) filters.push({ type: 'dateFrom', label: `From: ${currentFilter.dateFrom}`, clear: () => { currentFilter.dateFrom = null; document.getElementById('dateFrom').value = ''; } });
+      if (currentFilter.dateTo) filters.push({ type: 'dateTo', label: `To: ${currentFilter.dateTo}`, clear: () => { currentFilter.dateTo = null; document.getElementById('dateTo').value = ''; } });
+      
+      if (filters.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+      
+      container.style.display = 'block';
+      container.innerHTML = `
+        <div class="active-filters">
+          ${filters.map((f, i) => `
+            <span class="active-filter-tag">
+              ${escapeHtml(f.label)}
+              <span class="remove" onclick="removeFilter(${i})">&times;</span>
+            </span>
+          `).join('')}
+        </div>
+      `;
+      
+      // Store filter clear functions
+      window._activeFilters = filters;
+    }
+
+    function removeFilter(index) {
+      if (window._activeFilters && window._activeFilters[index]) {
+        window._activeFilters[index].clear();
+        renderIssues();
+        updateFilterUI();
+      }
     }
 
     function exportData() {
@@ -754,22 +974,28 @@
     function setFilter(type, value) {
       if (type === 'project') {
         currentFilter.project = currentFilter.project === value ? null : value;
-        document.querySelectorAll('.filter-btn[data-project]').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.project === currentFilter.project);
-        });
       } else if (type === 'tag') {
         currentFilter.tag = currentFilter.tag === value ? null : value;
-        document.querySelectorAll('.tag[data-tag]').forEach(tag => {
-          tag.classList.toggle('active', tag.dataset.tag === currentFilter.tag);
-        });
       }
       renderIssues();
+      updateFilterUI();
     }
 
     function getFilteredIssues() {
       return issues.filter(issue => {
         if (currentFilter.project && issue.project !== currentFilter.project) return false;
         if (currentFilter.tag && !issue.tags.includes(currentFilter.tag)) return false;
+        
+        // Date range filter
+        if (currentFilter.dateFrom) {
+          const issueDate = new Date(issue.createdAt).toISOString().split('T')[0];
+          if (issueDate < currentFilter.dateFrom) return false;
+        }
+        if (currentFilter.dateTo) {
+          const issueDate = new Date(issue.createdAt).toISOString().split('T')[0];
+          if (issueDate > currentFilter.dateTo) return false;
+        }
+        
         if (searchQuery) {
           const searchable = [issue.title, issue.error, issue.context, issue.solution, issue.project, ...issue.tags].join(' ').toLowerCase();
           if (!searchable.includes(searchQuery)) return false;
@@ -778,11 +1004,21 @@
       });
     }
 
+    function highlightText(text, query) {
+      if (!query || !text) return escapeHtml(text);
+      const escaped = escapeHtml(text);
+      const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+      return escaped.replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    function escapeRegex(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
     function renderIssues() {
       const filtered = getFilteredIssues();
       const sort = document.getElementById('sortSelect').value;
       
-      // Sort: pinned first, then by selected sort
       filtered.sort((a, b) => {
         if (a.pinned && !b.pinned) return -1;
         if (!a.pinned && b.pinned) return 1;
@@ -803,28 +1039,29 @@
           </div>
         `;
         document.getElementById('contentTitle').textContent = 'All Issues (0)';
+        updateFilterUI();
         return;
       }
 
       list.innerHTML = filtered.map(issue => `
         <div class="issue-card ${issue.pinned ? 'pinned' : ''}" onclick="viewIssue('${issue.id}')">
           <div class="issue-header">
-            <div class="issue-title">${escapeHtml(issue.title)}</div>
+            <div class="issue-title">${highlightText(issue.title, searchQuery)}</div>
             <div class="issue-date">${formatDate(issue.createdAt)}</div>
           </div>
-          ${issue.error ? `<div class="issue-error">${escapeHtml(issue.error)}</div>` : ''}
+          ${issue.error ? `<div class="issue-error">${highlightText(issue.error, searchQuery)}</div>` : ''}
           <div class="issue-meta">
             ${issue.project ? `
               <div class="issue-project">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                 </svg>
-                ${escapeHtml(issue.project)}
+                ${highlightText(issue.project, searchQuery)}
               </div>
             ` : ''}
             ${issue.tags.length ? `
               <div class="issue-tags">
-                ${issue.tags.map(tag => `<span class="issue-tag">${escapeHtml(tag)}</span>`).join('')}
+                ${issue.tags.map(tag => `<span class="issue-tag">${highlightText(tag, searchQuery)}</span>`).join('')}
               </div>
             ` : ''}
           </div>
@@ -835,6 +1072,7 @@
       if (currentFilter.project) title = `Project: ${currentFilter.project}`;
       if (currentFilter.tag) title = `Tag: ${currentFilter.tag}`;
       document.getElementById('contentTitle').textContent = `${title} (${filtered.length})`;
+      updateFilterUI();
     }
 
     function updateFilters() {
@@ -866,25 +1104,12 @@
     function parseMarkdown(text) {
       if (!text) return '';
       let html = escapeHtml(text);
-      
-      // Code blocks (```code```)
       html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-      
-      // Inline code (`code`)
       html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      
-      // Bold (**text**)
       html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      
-      // Italic (*text*)
       html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-      
-      // Links [text](url)
       html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-      
-      // Line breaks
       html = html.replace(/\n/g, '<br>');
-      
       return html;
     }
 
