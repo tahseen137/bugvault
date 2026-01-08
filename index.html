@@ -28,11 +28,7 @@
       --font-sans: 'Space Grotesk', sans-serif;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: var(--font-sans);
@@ -42,30 +38,13 @@
       line-height: 1.6;
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--bg-main);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--border-focus);
-    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-main); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-focus); }
 
-    /* Layout */
-    .app {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      min-height: 100vh;
-    }
+    .app { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
 
-    /* Header */
     .header {
       background: var(--bg-main);
       border-bottom: 1px solid var(--border);
@@ -76,43 +55,21 @@
       gap: 2rem;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+    .logo { display: flex; align-items: center; gap: 0.75rem; }
 
     .logo-icon {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-blue) 100%);
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-mono);
-      font-weight: 700;
-      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-weight: 700; font-size: 14px;
       color: var(--bg-deep);
     }
 
-    .logo-text {
-      font-weight: 700;
-      font-size: 1.25rem;
-      letter-spacing: -0.5px;
-    }
+    .logo-text { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.5px; }
+    .logo-text span { color: var(--text-muted); font-weight: 400; }
 
-    .logo-text span {
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    /* Search */
-    .search-container {
-      flex: 1;
-      max-width: 500px;
-      position: relative;
-    }
+    .search-container { flex: 1; max-width: 500px; position: relative; }
 
     .search-input {
       width: 100%;
@@ -132,24 +89,15 @@
       box-shadow: 0 0 0 3px rgba(61, 214, 140, 0.1);
     }
 
-    .search-input::placeholder {
-      color: var(--text-muted);
-    }
+    .search-input::placeholder { color: var(--text-muted); }
 
     .search-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
+      position: absolute; left: 1rem; top: 50%;
       transform: translateY(-50%);
-      color: var(--text-muted);
-      pointer-events: none;
+      color: var(--text-muted); pointer-events: none;
     }
 
-    /* Header Actions */
-    .header-actions {
-      display: flex;
-      gap: 0.75rem;
-    }
+    .header-actions { display: flex; gap: 0.75rem; }
 
     .btn {
       padding: 0.625rem 1.25rem;
@@ -165,44 +113,15 @@
       gap: 0.5rem;
     }
 
-    .btn-primary {
-      background: var(--accent-green);
-      color: var(--bg-deep);
-    }
+    .btn-primary { background: var(--accent-green); color: var(--bg-deep); }
+    .btn-primary:hover { background: #4de69c; transform: translateY(-1px); }
+    .btn-secondary { background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-danger { background: transparent; color: var(--accent-red); border: 1px solid var(--accent-red); }
+    .btn-danger:hover { background: var(--accent-red); color: white; }
 
-    .btn-primary:hover {
-      background: #4de69c;
-      transform: translateY(-1px);
-    }
+    .main { display: grid; grid-template-columns: 280px 1fr; overflow: hidden; }
 
-    .btn-secondary {
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--border);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-secondary);
-    }
-
-    .btn-ghost:hover {
-      color: var(--text-primary);
-      background: var(--bg-elevated);
-    }
-
-    /* Main Content */
-    .main {
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      overflow: hidden;
-    }
-
-    /* Sidebar */
     .sidebar {
       background: var(--bg-main);
       border-right: 1px solid var(--border);
@@ -210,9 +129,7 @@
       overflow-y: auto;
     }
 
-    .sidebar-section {
-      margin-bottom: 2rem;
-    }
+    .sidebar-section { margin-bottom: 2rem; }
 
     .sidebar-title {
       font-size: 0.7rem;
@@ -223,50 +140,22 @@
       font-weight: 600;
     }
 
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+    .filter-group { display: flex; flex-direction: column; gap: 0.25rem; }
 
     .filter-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+      display: flex; align-items: center; gap: 0.75rem;
       padding: 0.625rem 0.75rem;
-      background: transparent;
-      border: none;
-      border-radius: 6px;
+      background: transparent; border: none; border-radius: 6px;
       color: var(--text-secondary);
-      font-family: var(--font-sans);
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      text-align: left;
+      font-family: var(--font-sans); font-size: 0.875rem;
+      cursor: pointer; transition: all 0.15s ease; text-align: left;
     }
 
-    .filter-btn:hover {
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-    }
+    .filter-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
+    .filter-btn.active { background: var(--bg-elevated); color: var(--accent-green); }
+    .filter-count { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
 
-    .filter-btn.active {
-      background: var(--bg-elevated);
-      color: var(--accent-green);
-    }
-
-    .filter-count {
-      margin-left: auto;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
     .tag {
       padding: 0.375rem 0.75rem;
@@ -280,34 +169,17 @@
       border: 1px solid transparent;
     }
 
-    .tag:hover {
-      border-color: var(--border-focus);
-      color: var(--text-primary);
-    }
+    .tag:hover { border-color: var(--border-focus); color: var(--text-primary); }
+    .tag.active { background: var(--accent-green); color: var(--bg-deep); }
 
-    .tag.active {
-      background: var(--accent-green);
-      color: var(--bg-deep);
-    }
-
-    /* Content Area */
-    .content {
-      padding: 2rem;
-      overflow-y: auto;
-      background: var(--bg-deep);
-    }
+    .content { padding: 2rem; overflow-y: auto; background: var(--bg-deep); }
 
     .content-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 1.5rem;
     }
 
-    .content-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
+    .content-title { font-size: 1.25rem; font-weight: 600; }
 
     .sort-select {
       padding: 0.5rem 1rem;
@@ -320,12 +192,7 @@
       cursor: pointer;
     }
 
-    /* Issue Cards */
-    .issues-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+    .issues-list { display: flex; flex-direction: column; gap: 1rem; }
 
     .issue-card {
       background: var(--bg-card);
@@ -342,44 +209,9 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
 
-    .issue-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .issue-status {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-top: 6px;
-      flex-shrink: 0;
-    }
-
-    .issue-status.resolved {
-      background: var(--accent-green);
-      box-shadow: 0 0 8px var(--accent-green);
-    }
-
-    .issue-status.unresolved {
-      background: var(--accent-red);
-      box-shadow: 0 0 8px var(--accent-red);
-    }
-
-    .issue-title {
-      font-weight: 600;
-      font-size: 1rem;
-      flex: 1;
-      line-height: 1.4;
-    }
-
-    .issue-date {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
+    .issue-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 0.75rem; }
+    .issue-title { font-weight: 600; font-size: 1rem; flex: 1; line-height: 1.4; }
+    .issue-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
 
     .issue-error {
       background: var(--bg-deep);
@@ -394,143 +226,60 @@
       white-space: nowrap;
     }
 
-    .issue-meta {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
+    .issue-meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .issue-project { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8rem; color: var(--accent-blue); }
+    .issue-tags { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+    .issue-tag { padding: 0.25rem 0.5rem; background: var(--bg-elevated); border-radius: 4px; font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-secondary); }
 
-    .issue-project {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 0.8rem;
-      color: var(--accent-blue);
-    }
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+    .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+    .empty-title { font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
 
-    .issue-tags {
-      display: flex;
-      gap: 0.375rem;
-      flex-wrap: wrap;
-    }
-
-    .issue-tag {
-      padding: 0.25rem 0.5rem;
-      background: var(--bg-elevated);
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-family: var(--font-mono);
-      color: var(--text-secondary);
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
-    }
-
-    .empty-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      opacity: 0.5;
-    }
-
-    .empty-title {
-      font-size: 1.25rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-    }
-
-    /* Modal */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.2s ease;
-      padding: 2rem;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; visibility: hidden;
+      transition: all 0.2s ease; padding: 2rem;
     }
 
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
 
     .modal {
       background: var(--bg-main);
       border: 1px solid var(--border);
       border-radius: 12px;
-      width: 100%;
-      max-width: 700px;
-      max-height: 90vh;
+      width: 100%; max-width: 700px; max-height: 90vh;
       overflow-y: auto;
       transform: translateY(20px);
       transition: transform 0.2s ease;
     }
 
-    .modal-overlay.active .modal {
-      transform: translateY(0);
-    }
+    .modal-overlay.active .modal { transform: translateY(0); }
 
     .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 1.25rem 1.5rem;
       border-bottom: 1px solid var(--border);
     }
 
-    .modal-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-    }
+    .modal-title { font-size: 1.125rem; font-weight: 600; }
 
     .modal-close {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      border-radius: 6px;
-      font-size: 1.25rem;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none;
+      color: var(--text-muted); cursor: pointer;
+      border-radius: 6px; font-size: 1.25rem;
       transition: all 0.15s ease;
     }
 
-    .modal-close:hover {
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-    }
+    .modal-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
+    .modal-body { padding: 1.5rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-secondary); }
 
-    .modal-body {
-      padding: 1.5rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      color: var(--text-secondary);
-    }
-
-    .form-input,
-    .form-textarea,
-    .form-select {
+    .form-input, .form-textarea, .form-select {
       width: 100%;
       padding: 0.75rem 1rem;
       background: var(--bg-card);
@@ -542,138 +291,52 @@
       transition: all 0.2s ease;
     }
 
-    .form-input:focus,
-    .form-textarea:focus,
-    .form-select:focus {
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
       outline: none;
       border-color: var(--accent-green);
       box-shadow: 0 0 0 3px rgba(61, 214, 140, 0.1);
     }
 
-    .form-textarea {
-      min-height: 100px;
-      resize: vertical;
-      font-family: var(--font-mono);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .form-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      cursor: pointer;
-    }
-
-    .form-checkbox input {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent-green);
-    }
+    .form-textarea { min-height: 100px; resize: vertical; font-family: var(--font-mono); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
     .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
+      display: flex; justify-content: flex-end; gap: 0.75rem;
       padding: 1.25rem 1.5rem;
       border-top: 1px solid var(--border);
     }
 
-    /* Detail Modal */
-    .detail-section {
-      margin-bottom: 1.5rem;
-    }
-
-    .detail-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-    }
+    .detail-section { margin-bottom: 1.5rem; }
+    .detail-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 0.5rem; }
 
     .detail-error {
-      background: var(--bg-card);
-      border-radius: 8px;
-      padding: 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: var(--accent-red);
-      white-space: pre-wrap;
-      word-break: break-word;
+      background: var(--bg-card); border-radius: 8px; padding: 1rem;
+      font-family: var(--font-mono); font-size: 0.85rem;
+      color: var(--accent-red); white-space: pre-wrap; word-break: break-word;
       border-left: 3px solid var(--accent-red);
     }
 
     .detail-solution {
-      background: var(--bg-card);
-      border-radius: 8px;
-      padding: 1rem;
-      font-size: 0.9rem;
-      line-height: 1.7;
+      background: var(--bg-card); border-radius: 8px; padding: 1rem;
+      font-size: 0.9rem; line-height: 1.7;
       border-left: 3px solid var(--accent-green);
     }
 
-    .detail-context {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
+    .detail-context { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
 
     .detail-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 1.5rem;
+      padding-top: 1rem; border-top: 1px solid var(--border);
     }
 
-    .detail-meta-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    .detail-meta-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-    }
-
-    .detail-meta-value {
-      font-size: 0.875rem;
-      color: var(--text-primary);
-    }
+    .detail-meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .detail-meta-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+    .detail-meta-value { font-size: 0.875rem; color: var(--text-primary); }
 
     .detail-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
+      display: flex; gap: 0.75rem;
+      margin-top: 1.5rem; padding-top: 1.5rem;
       border-top: 1px solid var(--border);
-    }
-
-    .btn-danger {
-      background: transparent;
-      color: var(--accent-red);
-      border: 1px solid var(--accent-red);
-    }
-
-    .btn-danger:hover {
-      background: var(--accent-red);
-      color: white;
-    }
-
-    /* Stats */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
     }
 
     .stat-card {
@@ -681,59 +344,27 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 1.25rem;
+      text-align: center;
     }
 
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      font-family: var(--font-mono);
-      margin-bottom: 0.25rem;
-    }
+    .stat-value { font-size: 2rem; font-weight: 700; font-family: var(--font-mono); margin-bottom: 0.25rem; color: var(--accent-blue); }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); }
 
-    .stat-value.green { color: var(--accent-green); }
-    .stat-value.red { color: var(--accent-red); }
-    .stat-value.blue { color: var(--accent-blue); }
-
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    /* Responsive */
     @media (max-width: 900px) {
-      .main {
-        grid-template-columns: 1fr;
-      }
-      .sidebar {
-        display: none;
-      }
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
+      .main { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .form-row { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 600px) {
-      .header {
-        flex-wrap: wrap;
-        padding: 1rem;
-      }
-      .search-container {
-        order: 3;
-        max-width: none;
-        width: 100%;
-      }
-      .content {
-        padding: 1rem;
-      }
+      .header { flex-wrap: wrap; padding: 1rem; }
+      .search-container { order: 3; max-width: none; width: 100%; }
+      .content { padding: 1rem; }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- Header -->
     <header class="header">
       <div class="logo">
         <div class="logo-icon">🐛</div>
@@ -747,7 +378,7 @@
         </svg>
         <input type="text" class="search-input" id="searchInput" placeholder="Search issues, errors, solutions...">
       </div>
-      
+
       <div class="header-actions">
         <button class="btn btn-secondary" onclick="exportData()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -777,68 +408,22 @@
     </header>
 
     <main class="main">
-      <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-section">
-          <div class="sidebar-title">Status</div>
-          <div class="filter-group">
-            <button class="filter-btn active" data-filter="all" onclick="setFilter('status', 'all')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-              </svg>
-              All Issues
-              <span class="filter-count" id="countAll">0</span>
-            </button>
-            <button class="filter-btn" data-filter="unresolved" onclick="setFilter('status', 'unresolved')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="15" y1="9" x2="9" y2="15"></line>
-                <line x1="9" y1="9" x2="15" y2="15"></line>
-              </svg>
-              Unresolved
-              <span class="filter-count" id="countUnresolved">0</span>
-            </button>
-            <button class="filter-btn" data-filter="resolved" onclick="setFilter('status', 'resolved')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-              Resolved
-              <span class="filter-count" id="countResolved">0</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="sidebar-section">
           <div class="sidebar-title">Projects</div>
-          <div class="filter-group" id="projectFilters">
-            <!-- Dynamically populated -->
-          </div>
+          <div class="filter-group" id="projectFilters"></div>
         </div>
 
         <div class="sidebar-section">
           <div class="sidebar-title">Tags</div>
-          <div class="tag-list" id="tagFilters">
-            <!-- Dynamically populated -->
-          </div>
+          <div class="tag-list" id="tagFilters"></div>
         </div>
       </aside>
 
-      <!-- Content -->
       <div class="content">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value blue" id="statTotal">0</div>
-            <div class="stat-label">Total Issues</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value green" id="statResolved">0</div>
-            <div class="stat-label">Resolved</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value red" id="statOpen">0</div>
-            <div class="stat-label">Open</div>
-          </div>
+        <div class="stat-card" style="margin-bottom: 2rem;">
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Total Issues</div>
         </div>
 
         <div class="content-header">
@@ -850,9 +435,7 @@
           </select>
         </div>
 
-        <div class="issues-list" id="issuesList">
-          <!-- Dynamically populated -->
-        </div>
+        <div class="issues-list" id="issuesList"></div>
       </div>
     </main>
   </div>
@@ -897,13 +480,6 @@
             <input type="text" class="form-input" id="issueTags" placeholder="e.g., react, api, auth">
           </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-checkbox">
-            <input type="checkbox" id="issueResolved">
-            <span>Mark as resolved</span>
-          </label>
-        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('add')">Cancel</button>
@@ -919,19 +495,15 @@
         <h3 class="modal-title" id="detailTitle">Issue Details</h3>
         <button class="modal-close" onclick="closeModal('detail')">&times;</button>
       </div>
-      <div class="modal-body" id="detailBody">
-        <!-- Dynamically populated -->
-      </div>
+      <div class="modal-body" id="detailBody"></div>
     </div>
   </div>
 
   <script>
-    // Data Store
     let issues = [];
-    let currentFilter = { status: 'all', project: null, tag: null };
+    let currentFilter = { project: null, tag: null };
     let searchQuery = '';
 
-    // Initialize
     function init() {
       loadData();
       renderIssues();
@@ -944,19 +516,15 @@
       });
     }
 
-    // Local Storage
     function loadData() {
       const saved = localStorage.getItem('bugvault_issues');
-      if (saved) {
-        issues = JSON.parse(saved);
-      }
+      if (saved) issues = JSON.parse(saved);
     }
 
     function saveData() {
       localStorage.setItem('bugvault_issues', JSON.stringify(issues));
     }
 
-    // Export/Import
     function exportData() {
       const data = JSON.stringify(issues, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
@@ -978,7 +546,6 @@
           const imported = JSON.parse(e.target.result);
           if (Array.isArray(imported)) {
             if (confirm(`Import ${imported.length} issues? This will merge with existing data.`)) {
-              // Merge without duplicates (by id)
               const existingIds = new Set(issues.map(i => i.id));
               const newIssues = imported.filter(i => !existingIds.has(i.id));
               issues = [...issues, ...newIssues];
@@ -989,33 +556,23 @@
               alert(`Imported ${newIssues.length} new issues.`);
             }
           }
-        } catch (err) {
-          alert('Invalid JSON file');
-        }
+        } catch (err) { alert('Invalid JSON file'); }
       };
       reader.readAsText(file);
       event.target.value = '';
     }
 
-    // Modal Management
     function openModal(type) {
-      document.getElementById(`modal${capitalize(type)}`).classList.add('active');
+      document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
       document.body.style.overflow = 'hidden';
     }
 
     function closeModal(type) {
-      document.getElementById(`modal${capitalize(type)}`).classList.remove('active');
+      document.getElementById(`modal${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove('active');
       document.body.style.overflow = '';
-      if (type === 'add') {
-        clearForm();
-      }
+      if (type === 'add') clearForm();
     }
 
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    // Form Management
     function clearForm() {
       document.getElementById('editId').value = '';
       document.getElementById('issueTitle').value = '';
@@ -1024,16 +581,12 @@
       document.getElementById('issueSolution').value = '';
       document.getElementById('issueProject').value = '';
       document.getElementById('issueTags').value = '';
-      document.getElementById('issueResolved').checked = false;
       document.getElementById('modalAddTitle').textContent = 'Log New Issue';
     }
 
     function saveIssue() {
       const title = document.getElementById('issueTitle').value.trim();
-      if (!title) {
-        alert('Title is required');
-        return;
-      }
+      if (!title) { alert('Title is required'); return; }
 
       const editId = document.getElementById('editId').value;
       const issue = {
@@ -1044,7 +597,6 @@
         solution: document.getElementById('issueSolution').value.trim(),
         project: document.getElementById('issueProject').value.trim(),
         tags: document.getElementById('issueTags').value.split(',').map(t => t.trim()).filter(Boolean),
-        resolved: document.getElementById('issueResolved').checked,
         createdAt: editId ? issues.find(i => i.id === editId)?.createdAt : new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -1063,14 +615,8 @@
       updateStats();
     }
 
-    // Filtering
     function setFilter(type, value) {
-      if (type === 'status') {
-        currentFilter.status = value;
-        document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.filter === value);
-        });
-      } else if (type === 'project') {
+      if (type === 'project') {
         currentFilter.project = currentFilter.project === value ? null : value;
         document.querySelectorAll('.filter-btn[data-project]').forEach(btn => {
           btn.classList.toggle('active', btn.dataset.project === currentFilter.project);
@@ -1086,34 +632,16 @@
 
     function getFilteredIssues() {
       return issues.filter(issue => {
-        // Status filter
-        if (currentFilter.status === 'resolved' && !issue.resolved) return false;
-        if (currentFilter.status === 'unresolved' && issue.resolved) return false;
-        
-        // Project filter
         if (currentFilter.project && issue.project !== currentFilter.project) return false;
-        
-        // Tag filter
         if (currentFilter.tag && !issue.tags.includes(currentFilter.tag)) return false;
-        
-        // Search
         if (searchQuery) {
-          const searchable = [
-            issue.title,
-            issue.error,
-            issue.context,
-            issue.solution,
-            issue.project,
-            ...issue.tags
-          ].join(' ').toLowerCase();
+          const searchable = [issue.title, issue.error, issue.context, issue.solution, issue.project, ...issue.tags].join(' ').toLowerCase();
           if (!searchable.includes(searchQuery)) return false;
         }
-        
         return true;
       });
     }
 
-    // Rendering
     function renderIssues() {
       const filtered = getFilteredIssues();
       const sort = document.getElementById('sortSelect').value;
@@ -1141,7 +669,6 @@
       list.innerHTML = filtered.map(issue => `
         <div class="issue-card" onclick="viewIssue('${issue.id}')">
           <div class="issue-header">
-            <div class="issue-status ${issue.resolved ? 'resolved' : 'unresolved'}"></div>
             <div class="issue-title">${escapeHtml(issue.title)}</div>
             <div class="issue-date">${formatDate(issue.createdAt)}</div>
           </div>
@@ -1164,22 +691,13 @@
         </div>
       `).join('');
 
-      // Update title
       let title = 'All Issues';
-      if (currentFilter.status === 'resolved') title = 'Resolved Issues';
-      if (currentFilter.status === 'unresolved') title = 'Open Issues';
       if (currentFilter.project) title = `Project: ${currentFilter.project}`;
       if (currentFilter.tag) title = `Tag: ${currentFilter.tag}`;
       document.getElementById('contentTitle').textContent = title;
     }
 
     function updateFilters() {
-      // Update counts
-      document.getElementById('countAll').textContent = issues.length;
-      document.getElementById('countResolved').textContent = issues.filter(i => i.resolved).length;
-      document.getElementById('countUnresolved').textContent = issues.filter(i => !i.resolved).length;
-
-      // Projects
       const projects = [...new Set(issues.map(i => i.project).filter(Boolean))];
       document.getElementById('projectFilters').innerHTML = projects.map(project => `
         <button class="filter-btn ${currentFilter.project === project ? 'active' : ''}" 
@@ -1193,7 +711,6 @@
         </button>
       `).join('');
 
-      // Tags
       const tags = [...new Set(issues.flatMap(i => i.tags))];
       document.getElementById('tagFilters').innerHTML = tags.map(tag => `
         <span class="tag ${currentFilter.tag === tag ? 'active' : ''}" 
@@ -1204,11 +721,8 @@
 
     function updateStats() {
       document.getElementById('statTotal').textContent = issues.length;
-      document.getElementById('statResolved').textContent = issues.filter(i => i.resolved).length;
-      document.getElementById('statOpen').textContent = issues.filter(i => !i.resolved).length;
     }
 
-    // View Issue
     function viewIssue(id) {
       const issue = issues.find(i => i.id === id);
       if (!issue) return;
@@ -1221,28 +735,19 @@
             <div class="detail-error">${escapeHtml(issue.error)}</div>
           </div>
         ` : ''}
-        
         ${issue.context ? `
           <div class="detail-section">
             <div class="detail-label">Context</div>
             <div class="detail-context">${escapeHtml(issue.context)}</div>
           </div>
         ` : ''}
-        
         ${issue.solution ? `
           <div class="detail-section">
             <div class="detail-label">Solution</div>
             <div class="detail-solution">${escapeHtml(issue.solution)}</div>
           </div>
         ` : ''}
-        
         <div class="detail-meta">
-          <div class="detail-meta-item">
-            <span class="detail-meta-label">Status</span>
-            <span class="detail-meta-value" style="color: ${issue.resolved ? 'var(--accent-green)' : 'var(--accent-red)'}">
-              ${issue.resolved ? '✓ Resolved' : '✗ Open'}
-            </span>
-          </div>
           ${issue.project ? `
             <div class="detail-meta-item">
               <span class="detail-meta-label">Project</span>
@@ -1260,16 +765,11 @@
             </div>
           ` : ''}
         </div>
-        
         <div class="detail-actions">
           <button class="btn btn-primary" onclick="editIssue('${issue.id}')">Edit</button>
-          <button class="btn btn-secondary" onclick="toggleResolved('${issue.id}')">
-            ${issue.resolved ? 'Mark as Open' : 'Mark as Resolved'}
-          </button>
           <button class="btn btn-danger" onclick="deleteIssue('${issue.id}')">Delete</button>
         </div>
       `;
-
       openModal('detail');
     }
 
@@ -1286,23 +786,9 @@
       document.getElementById('issueSolution').value = issue.solution;
       document.getElementById('issueProject').value = issue.project;
       document.getElementById('issueTags').value = issue.tags.join(', ');
-      document.getElementById('issueResolved').checked = issue.resolved;
       document.getElementById('modalAddTitle').textContent = 'Edit Issue';
 
       openModal('add');
-    }
-
-    function toggleResolved(id) {
-      const issue = issues.find(i => i.id === id);
-      if (issue) {
-        issue.resolved = !issue.resolved;
-        issue.updatedAt = new Date().toISOString();
-        saveData();
-        closeModal('detail');
-        renderIssues();
-        updateFilters();
-        updateStats();
-      }
     }
 
     function deleteIssue(id) {
@@ -1316,12 +802,9 @@
       }
     }
 
-    // Utilities
     function escapeHtml(str) {
       if (!str) return '';
-      return str.replace(/[&<>"']/g, (m) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[m]));
+      return str.replace(/[&<>"']/g, (m) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m]));
     }
 
     function formatDate(iso) {
@@ -1329,36 +812,28 @@
       const now = new Date();
       const diff = now - date;
       
-      if (diff < 86400000) { // Less than 24h
+      if (diff < 86400000) {
         const hours = Math.floor(diff / 3600000);
         if (hours < 1) return 'Just now';
         return `${hours}h ago`;
       }
-      if (diff < 604800000) { // Less than 7 days
+      if (diff < 604800000) {
         const days = Math.floor(diff / 86400000);
         return `${days}d ago`;
       }
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    // Close modals on escape or overlay click
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeModal('add');
-        closeModal('detail');
-      }
+      if (e.key === 'Escape') { closeModal('add'); closeModal('detail'); }
     });
 
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
       overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
-          closeModal('add');
-          closeModal('detail');
-        }
+        if (e.target === overlay) { closeModal('add'); closeModal('detail'); }
       });
     });
 
-    // Initialize on load
     init();
   </script>
 </body>
