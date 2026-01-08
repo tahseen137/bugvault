@@ -1033,7 +1033,7 @@
       }
 
       document.getElementById('issuesList').innerHTML = filtered.map(issue => `
-        <div class="issue-card ${issue.pinned ? 'pinned' : ''} ${selectedIssues.has(issue.id) ? 'selected' : ''}" onclick="${bulkMode ? '' : `viewIssue(${issue.id})`}">
+        <div class="issue-card ${issue.pinned ? 'pinned' : ''} ${selectedIssues.has(issue.id) ? 'selected' : ''}" onclick="${bulkMode ? '' : ('viewIssue(' + issue.id + ')')}">
           <div class="issue-header">
             ${bulkMode ? `<input type="checkbox" class="issue-checkbox" ${selectedIssues.has(issue.id) ? 'checked' : ''} onclick="toggleIssueSelection(${issue.id}, event)">` : ''}
             <div class="issue-title">${highlightText(issue.title)}</div>
