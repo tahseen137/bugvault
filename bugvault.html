@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BugVault - A portable, single-file developer issue tracker. Store bugs, errors, and solutions in your browser with no servers or accounts required.">
+  <meta name="keywords" content="bug tracker, issue tracker, developer tools, error logging, debugging, knowledge base">
+  <meta name="author" content="tahseen137">
+  <meta name="theme-color" content="#3dd68c">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BugVault — Developer Issue Tracker">
+  <meta property="og:description" content="A portable, single-file developer issue tracker. No servers, no accounts—just one HTML file.">
+  <meta property="og:url" content="https://tahseen137.github.io/bugvault">
+  
   <title>BugVault — Developer Issue Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -732,6 +743,14 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: sans-serif; background: #12121a; color: #e8e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <div>
+        <h1 style="font-size: 2rem; margin-bottom: 1rem;">⚠️ JavaScript Required</h1>
+        <p>BugVault requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </div>
+  </noscript>
   <div class="app">
     <!-- Header -->
     <header class="header">
@@ -741,33 +760,33 @@
       </div>
       
       <div class="search-container">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search issues, errors, solutions...">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search issues, errors, solutions..." aria-label="Search issues">
       </div>
       
       <div class="header-actions">
-        <button class="btn btn-secondary" onclick="exportData()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn btn-secondary" onclick="exportData()" aria-label="Export all issues as JSON">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
           Export
         </button>
-        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" aria-label="Import issues from JSON file">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="17 8 12 3 7 8"></polyline>
             <line x1="12" y1="3" x2="12" y2="15"></line>
           </svg>
           Import
         </button>
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-        <button class="btn btn-primary" onclick="openModal('add')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" aria-label="Choose JSON file to import">
+        <button class="btn btn-primary" onclick="openModal('add')" aria-label="Create new issue">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
@@ -776,9 +795,9 @@
       </div>
     </header>
 
-    <main class="main">
+    <main class="main" role="main">
       <!-- Sidebar -->
-      <aside class="sidebar">
+      <aside class="sidebar" role="complementary" aria-label="Filters and navigation">
         <div class="sidebar-section">
           <div class="sidebar-title">Status</div>
           <div class="filter-group">
@@ -858,11 +877,11 @@
   </div>
 
   <!-- Add/Edit Modal -->
-  <div class="modal-overlay" id="modalAdd">
+  <div class="modal-overlay" id="modalAdd" role="dialog" aria-labelledby="modalAddTitle" aria-modal="true">
     <div class="modal">
       <div class="modal-header">
         <h3 class="modal-title" id="modalAddTitle">Log New Issue</h3>
-        <button class="modal-close" onclick="closeModal('add')">&times;</button>
+        <button class="modal-close" onclick="closeModal('add')" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="editId">
@@ -913,11 +932,11 @@
   </div>
 
   <!-- Detail Modal -->
-  <div class="modal-overlay" id="modalDetail">
+  <div class="modal-overlay" id="modalDetail" role="dialog" aria-labelledby="detailTitle" aria-modal="true">
     <div class="modal">
       <div class="modal-header">
         <h3 class="modal-title" id="detailTitle">Issue Details</h3>
-        <button class="modal-close" onclick="closeModal('detail')">&times;</button>
+        <button class="modal-close" onclick="closeModal('detail')" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body" id="detailBody">
         <!-- Dynamically populated -->

@@ -6,6 +6,17 @@
        ============================================ -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BugVault - A portable, single-file developer issue tracker. Store bugs, errors, and solutions in your browser with no servers or accounts required.">
+  <meta name="keywords" content="bug tracker, issue tracker, developer tools, error logging, debugging, knowledge base">
+  <meta name="author" content="tahseen137">
+  <meta name="theme-color" content="#3dd68c">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BugVault — Developer Issue Tracker">
+  <meta property="og:description" content="A portable, single-file developer issue tracker. No servers, no accounts—just one HTML file.">
+  <meta property="og:url" content="https://tahseen137.github.io/bugvault">
+  
   <title>BugVault — Developer Issue Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -550,7 +561,15 @@
   </style>
 </head>
 <body>
-  <div class="drop-zone" id="dropZone">📁 Drop JSON file to import</div>
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: sans-serif; background: #12121a; color: #e8e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <div>
+        <h1 style="font-size: 2rem; margin-bottom: 1rem;">⚠️ JavaScript Required</h1>
+        <p>BugVault requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </div>
+  </noscript>
+  <div class="drop-zone" id="dropZone" role="alert" aria-live="assertive">📁 Drop JSON file to import</div>
   <div class="backup-indicator" id="backupIndicator">💾 Auto-backup saved</div>
 
   <div class="app">
@@ -561,23 +580,23 @@
       </div>
       
       <div class="search-container">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search issues, errors, solutions...">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search issues, errors, solutions..." aria-label="Search issues">
       </div>
 
       <div class="header-actions">
-        <button class="btn btn-secondary btn-sm" onclick="toggleBulkMode()" id="bulkModeBtn">Select</button>
-        <button class="btn btn-secondary" onclick="exportData()">Export</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import</button>
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-        <button class="btn btn-primary" onclick="openModal('add')">+ New Issue</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleBulkMode()" id="bulkModeBtn" aria-label="Toggle bulk selection mode">Select</button>
+        <button class="btn btn-secondary" onclick="exportData()" aria-label="Export all issues as JSON">Export</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" aria-label="Import issues from JSON file">Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" aria-label="Choose JSON file to import">
+        <button class="btn btn-primary" onclick="openModal('add')" aria-label="Create new issue">+ New Issue</button>
       </div>
     </header>
-    <main class="main">
-      <aside class="sidebar">
+    <main class="main" role="main">
+      <aside class="sidebar" role="complementary" aria-label="Filters and navigation">
         <div class="sidebar-section">
           <div class="sidebar-title">Projects</div>
           <div class="filter-group" id="projectFilters"></div>
@@ -641,11 +660,11 @@
   </div>
 
   <!-- Add/Edit Modal -->
-  <div class="modal-overlay" id="addModal">
+  <div class="modal-overlay" id="addModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
     <div class="modal">
       <div class="modal-header">
         <h3 class="modal-title" id="modalTitle">New Issue</h3>
-        <button class="modal-close" onclick="closeModal('add')">&times;</button>
+        <button class="modal-close" onclick="closeModal('add')" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="editId">
@@ -685,11 +704,11 @@
   </div>
 
   <!-- Detail Modal -->
-  <div class="modal-overlay" id="detailModal">
+  <div class="modal-overlay" id="detailModal" role="dialog" aria-labelledby="detailTitle" aria-modal="true">
     <div class="modal">
       <div class="modal-header">
         <h3 class="modal-title" id="detailTitle">Issue Details</h3>
-        <button class="modal-close" onclick="closeModal('detail')">&times;</button>
+        <button class="modal-close" onclick="closeModal('detail')" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body" id="detailBody"></div>
     </div>
