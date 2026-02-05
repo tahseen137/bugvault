@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # MongoDB database
+  mongo:
+    image: mongo:7
+    container_name: bugvault-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: bugvault
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/bugvault --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # BugVault application
+  app:
+    build: .
+    container_name: bugvault-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/bugvault
+      - PORT=3000
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ./sample-bugs.json:/app/sample-bugs.json:ro
+
+volumes:
+  mongo_data:
+    driver: local

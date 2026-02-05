@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BugVault - Full-stack developer issue tracker with MongoDB. Store bugs, errors, and solutions.">
+  <meta name="keywords" content="bug tracker, issue tracker, developer tools, error logging, debugging, knowledge base, mongodb">
+  <meta name="author" content="tahseen137">
+  <meta name="theme-color" content="#3dd68c">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BugVault — Developer Issue Tracker">
+  <meta property="og:description" content="Full-stack developer issue tracker with MongoDB backend.">
+  <meta property="og:url" content="https://github.com/tahseen137/bugvault">
+  
+  <title>BugVault — Developer Issue Tracker</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: sans-serif; background: #12121a; color: #e8e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <div>
+        <h1 style="font-size: 2rem; margin-bottom: 1rem;">⚠️ JavaScript Required</h1>
+        <p>BugVault requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </div>
+  </noscript>
+
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">🐛</div>
+        <div class="logo-text">BugVault <span>Issue Tracker</span></div>
+      </div>
+      
+      <div class="search-container">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search issues, errors, solutions..." aria-label="Search issues">
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="toggleBulkMode()" id="bulkModeBtn" aria-label="Toggle bulk selection mode">Select</button>
+        <button class="btn btn-secondary" onclick="exportData()" aria-label="Export all issues as JSON">Export</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" aria-label="Import issues from JSON file">Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" aria-label="Choose JSON file to import">
+        <button class="btn btn-primary" onclick="openModal('add')" aria-label="Create new issue">+ New Issue</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main" role="main">
+      <!-- Sidebar -->
+      <aside class="sidebar" role="complementary" aria-label="Filters and navigation">
+        <div class="sidebar-section">
+          <div class="sidebar-title">Projects</div>
+          <div class="filter-group" id="projectFilters">
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">Tags</div>
+          <div class="tag-list" id="tagFilters">
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">Date Range</div>
+          <div class="date-filter">
+            <label style="font-size: 0.75rem; color: var(--text-muted);">From</label>
+            <input type="date" class="date-input" id="dateFrom" onchange="applyFilters()">
+            <label style="font-size: 0.75rem; color: var(--text-muted);">To</label>
+            <input type="date" class="date-input" id="dateTo" onchange="applyFilters()">
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <section class="content">
+        <!-- Active Filters -->
+        <div id="activeFiltersContainer" class="active-filters" style="display: none;"></div>
+        
+        <!-- Bulk Actions -->
+        <div class="bulk-actions" id="bulkActions">
+          <span class="bulk-count"><span id="selectedCount">0</span> selected</span>
+          <button class="btn btn-sm btn-danger" onclick="bulkDelete()">Delete</button>
+          <button class="btn btn-sm btn-secondary" onclick="cancelBulkMode()">Cancel</button>
+        </div>
+
+        <!-- Content Header -->
+        <div class="content-header">
+          <h2 class="content-title" id="contentTitle">All Issues</h2>
+          <div class="content-actions">
+            <button class="btn btn-sm btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn" style="display: none;">Clear Filters</button>
+            <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="title">Title A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Issues List -->
+        <div class="issues-list" id="issuesList">
+          <div class="loading">Loading issues...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay" id="addModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">New Issue</h3>
+        <button class="modal-close" onclick="closeModal('add')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input type="text" class="form-input" id="issueTitle" placeholder="Brief description of the issue">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Error Message</label>
+          <textarea class="form-textarea" id="issueError" placeholder="Paste the error message here"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Solution</label>
+          <textarea class="form-textarea" id="issueSolution" placeholder="How did you fix it?" style="min-height: 150px;"></textarea>
+          <div class="form-hint">Supports: **bold**, *italic*, `code`, ```code blocks```, [links](url)</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Project</label>
+            <input type="text" class="form-input" id="issueProject" placeholder="e.g., my-app">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tags</label>
+            <input type="text" class="form-input" id="issueTags" placeholder="react, api, bug (comma separated)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Additional Context</label>
+          <textarea class="form-textarea" id="issueContext" placeholder="Any additional notes, links, or context"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('add')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveIssue()">Save Issue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="detailModal" role="dialog" aria-labelledby="detailTitle" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detailTitle">Issue Details</h3>
+        <button class="modal-close" onclick="closeModal('detail')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="detailBody"></div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="/js/app.js"></script>
+</body>
+</html>
