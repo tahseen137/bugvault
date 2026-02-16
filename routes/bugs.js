@@ -2,15 +2,51 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const Bug = require('../models/Bug');
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
 
-// Validation rules
+// Initialize DOMPurify for server-side sanitization
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
+
+// Sanitization helper
+const sanitize = (value) => {
+  if (typeof value !== 'string') return value;
+  return DOMPurify.sanitize(value, { 
+    ALLOWED_TAGS: [], // Strip all HTML tags
+    ALLOWED_ATTR: [] 
+  });
+};
+
+// Validation rules with XSS protection
 const bugValidation = [
-  body('title').notEmpty().trim().withMessage('Title is required'),
-  body('error').optional().trim(),
-  body('context').optional().trim(),
-  body('solution').optional().trim(),
-  body('project').optional().trim(),
-  body('tags').optional().isArray(),
+  body('title')
+    .notEmpty()
+    .trim()
+    .customSanitizer(sanitize)
+    .withMessage('Title is required'),
+  body('error')
+    .optional()
+    .trim()
+    .customSanitizer(sanitize),
+  body('context')
+    .optional()
+    .trim()
+    .customSanitizer(sanitize),
+  body('solution')
+    .optional()
+    .trim()
+    .customSanitizer(sanitize),
+  body('project')
+    .optional()
+    .trim()
+    .customSanitizer(sanitize),
+  body('tags')
+    .optional()
+    .isArray()
+    .customSanitizer(tags => 
+      Array.isArray(tags) ? tags.map(t => sanitize(t)) : tags
+    ),
   body('pinned').optional().isBoolean()
 ];
 

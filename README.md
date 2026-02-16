@@ -11,6 +11,15 @@ A full-stack developer issue tracker with MongoDB backend. Store bugs, errors, a
 
 Ever fixed a bug and forgotten the solution six months later? BugVault is your personal knowledge base for every error and fix you encounter. Now with MongoDB for persistence, search, and scalability.
 
+### 🔒 Security-First Design
+- **Input Sanitization:** All inputs sanitized with DOMPurify to prevent XSS
+- **Rate Limiting:** Protection against DoS attacks (100 req/15min per IP)
+- **Security Headers:** Helmet.js for CSP, X-Frame-Options, and more
+- **CORS Protection:** Configurable allowed origins
+- **Zero Vulnerabilities:** All dependencies audited and up-to-date
+
+See [SECURITY.md](SECURITY.md) for security policy and [AUDIT.md](AUDIT.md) for the full security audit.
+
 ## ✨ Features
 
 ### Core Functionality
